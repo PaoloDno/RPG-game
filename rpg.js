@@ -7,11 +7,19 @@ let fighting;
 let monsterHealth;
 let inventoryWeapon = ["stick"];
 let inventoryEquipment = ["adventurer gear"];
-let skills = [];
-let status = [];
-let blessings = [];
+let CharSkills = ["normal atk"];
+let blessingTEXT = "";
+let CharStatus = [
+{ name: "poison", turn: 999  },
+{ name: "stun", turn: 1 },
+];
+let CharacterBlessings = ["fast"];
+let characterClass;
 
-const button1 = document.querySelector('#button1');
+const backgDescrip = document.querySelector("#descript");
+const avatarCard = document.querySelector("#characterDisplay");
+const namebutton = document.querySelector("#nameButton");
+const button1 = document.querySelector("#button1");
 const button2 = document.querySelector("#button2");
 const button3 = document.querySelector("#button3");
 const button4 = document.querySelector("#button4");
@@ -24,6 +32,33 @@ const monsterName = document.querySelector("#monsterName");
 const monsterHealthText =document.querySelector("#monsterHealth");
 const monitor = document.querySelector("#game-monitor");
 const log = document.querySelector("#logs");
+
+
+/* attribute */
+const charNameText = document.querySelector("#nameText");
+const classText = document.querySelector("#classText");
+const baseStrText = document.querySelector("#baseStatTextStr");
+const baseMgkText = document.querySelector("#baseStatTextMgk");
+const baseSpdText = document.querySelector("#baseStatTextSpd");
+const baseAgiText = document.querySelector("#baseStatTextAgi");
+const baseDefText = document.querySelector("#baseStatTextDef");
+const baseResText = document.querySelector("#baseStatTextRes");
+const baseHpText = document.querySelector("#baseStatTextHp");
+const addedStrText = document.querySelector("#inventoryStatStr");
+const addedMgkText = document.querySelector("#inventoryStatMgk");
+const addedSpdText = document.querySelector("#inventoryStatSpd");
+const addedAgiText = document.querySelector("#inventoryStatAgi");
+const addedDefText = document.querySelector("#inventoryStatDef");
+const addedResText = document.querySelector("#inventoryStatRes");
+const addedHpText = document.querySelector("#inventoryStatHp");
+
+
+
+
+const skillsSetText = document.querySelector("#SkillsetsText");
+const blessingDisplay = document.querySelector("#blessingDisplay");
+const blessingText = document.querySelector("#blessingText");
+
 const equipments = [
   { name: 'adventurer gear', hp: 50, spd: 10, cost:100},
   { name: 'shinobi gear', str: 10, spd: 10, def: 20, cost:100}
@@ -45,7 +80,7 @@ const weapons = [
     { name: 'holy enchanted stick', str: 60, agi: 20, cost:10 },
 
 ];
-let playerbaseStat = [
+const playerbaseStat = 
   {
     str: 10,
     mgk: 10,
@@ -55,7 +90,7 @@ let playerbaseStat = [
     res: 10,
     hp: 100
   }
-]
+
 const playerskill = [];
 const playerBag = [];
 const monsters = [
@@ -79,7 +114,18 @@ const monsters = [
     agi: 20,
     def: 20,
     res: 20,
-    hp: 150
+    hp: 100
+  },
+  {
+    name: "goblin shaman",
+    level: 15,
+    str: 5,
+    mgk: 35,
+    spd: 35,
+    agi: 0,
+    def: 20,
+    res: 20,
+    hp: 120
   },
   {
     name: "fanged beast",
@@ -87,6 +133,17 @@ const monsters = [
     str: 30,
     mgk: 20,
     spd: 30,
+    agi: 30,
+    def: 40,
+    res: 20,
+    hp: 140
+  },
+  {
+    name: "evolve fanged beast",
+    level: 30,
+    str: 20,
+    mgk: 20,
+    spd: 50,
     agi: 30,
     def: 40,
     res: 20,
@@ -120,23 +177,23 @@ const locations = [
         bgimage: "town_store.jpg"
     },
     {
-        name: "start",
+        name: "Intro",
         "button text": ["How to play", "Ourbackstory", "Records", "Start the game"],
-        "button functions": [tutorials, tutorials/*backstory*/, tutorials/*record*/, goTown],
+        "button functions": [tutorials, tutorials/*backstory*/, tutorials/*record*/, phase1],
         text: "Welcome to Dragon Quest. You must defeat the dragon that eat humans.\n Should we start the game? Use the buttons above.",
         bgimage: "cover.jpg"
     },
     {
       name: "phase1",
       "button text": ["choice A", "choice B", "choice C", "choice D"],
-      "button functions": [ tutorials, tutorials, tutorials, goTown], /*[phase1A, phase1B, phase3A, phase4A],*/
+      "button functions": [phase1A, phase1B, phase1C, phase1D],
       text: "four gods has gazed upon ur travelling soul while in passing..\nchoose one of the gods gift\n",
       bgimage: "cover.jpg"
     },
     {
       name: "phase2",
-      "button text": ["choice A", "choice B", "choice C", "choice D"],
-      "button functions": [ tutorials, tutorials, tutorials, goTown],/*[phase2A, phase2B, phase2C, phase2D],*/
+      "button text": ["choice E", "choice F", "choice G", "choice H"],
+      "button functions": [ phase2E, phase2E, phase2E, phase2E ],
       text: "one of the gods is pleased with your choice \n ...while one gods isnt\n choose again",
       bgimage: "cover.jpg"
     },
@@ -148,14 +205,14 @@ const locations = [
       bgimage: "cover.jpg"
     },
     {
-      name: "guild",
+      name: "goGuild",
       "button text": ["Go to quest board", "Go to mess hall", "Go to desk", "contribute"],
       "button functions": [ tutorials, tutorials, tutorials, goTown],/*[getQuest, adventurerHall, gotoReceptionist, contributeToGuild],*/
       text: "You enter the guild. Its as chaotic and lively as ever.",
       bgimage: "cave.jpg"
     },
     {
-        name: "Inn",
+        name: "goInn",
         "button text": ["Buy Foods", "Check-in", "Ask for info", "Gamble"],
         "button functions": [ tutorials, tutorials, tutorials, goTown],/*[attack, dodge, goTown, gambleInn],*/
         text: "You are fighting a monster.",
@@ -201,7 +258,8 @@ const locations = [
 button1.onclick = tutorials;
 button2.onclick = tutorials;
 button3.onclick = tutorials;/*records;*/
-button3.onclick = tutorials;/*Start;*/
+button4.onclick = phase1;/*Start;*/
+nameButton.onclick = declareCharName;
 
 function update(location) {
   console.log("hello");
@@ -447,3 +505,274 @@ function pick(guess) {
       monitor.style.backgroundImage = `url('${bgimage}')`;
       console.log(bgimage);
     }
+
+
+
+
+function declareCharName() {
+  let charName = document.querySelector('#nameInput');
+  const characterName = charName.value;
+  nameButton.style.display = 'none';
+  charName.style.display = 'none';
+  nameText.innerText = characterName;
+  console.log(characterName);
+}
+
+
+
+function phase1() {
+  log.innerText += "You are being reborn to another world.. \n"
+  log.innerText += "Your physical form and attributes depen ds on your choices while in passing \n"
+  log.innerText += "Choose your destiny \n"
+  update(locations[3]);
+}
+function phase1A() {
+  const charClass = {
+    name: "ShieldHero",
+    str: 30,
+    mgk: 0,
+    spd: 5,
+    agi: 0,
+    def: 15,
+    res: 10,
+    hp: 150,
+    classImage: "newimages/Shield.png",
+    BgCard: "newimages/descrip1.jpg"
+  }
+  bgDescripAvatar(charClass.BgCard, charClass.classImage);
+  characterClass = charClass.name;
+  playerbaseStat.str += charClass.str;
+  playerbaseStat.mgk += charClass.mgk;
+  playerbaseStat.spd += charClass.spd;
+  playerbaseStat.agi += charClass.agi;
+  playerbaseStat.def += charClass.def;
+  playerbaseStat.res += charClass.res;
+  playerbaseStat.hp += charClass.hp;
+  console.log(playerbaseStat);
+  log.innerText += "You are the ShieldHero, a male edgy MC you have no bitches\n that turned furry";
+  updateAttributes();
+  update(locations[4]);
+}
+function phase1B() {
+  const charClass = {
+    name: "ShinobiWoman",
+    str: 25,
+    mgk: 0,
+    spd: 25,
+    agi: 15,
+    def: 0,
+    res: 0,
+    hp: 110,
+    classImage: "newimages/Ninja.png",
+    classBgCard: "newimages/descrip2.jpg"
+  }
+  bgDescripAvatar(charClass.classBgCard, charClass.classImage);
+  characterClass = charClass.name;
+  playerbaseStat.str += charClass.str;
+  playerbaseStat.mgk += charClass.mgk;
+  playerbaseStat.spd += charClass.spd;
+  playerbaseStat.agi += charClass.agi;
+  playerbaseStat.def += charClass.def;
+  playerbaseStat.res += charClass.res;
+  playerbaseStat.hp += charClass.hp;
+  console.log(playerbaseStat);
+  log.innerText += "Big booby ninja, high speed and killer dmg";
+  updateAttributes();
+  update(locations[4]);
+}
+function phase1C() {
+  const charClass = {
+    name: "MagicalWoman",
+    str: 0,
+    mgk: 40,
+    spd: 5,
+    agi: 15,
+    def: 0,
+    res: 5,
+    hp: 110,
+    classImage: "newimages/Wizard.png",
+    classBgCard: "newimages/descrip3.jpg"
+  }
+  bgDescripAvatar(charClass.classBgCard, charClass.classImage);
+  characterClass = charClass.name;
+  playerbaseStat.str += charClass.str;
+  playerbaseStat.mgk += charClass.mgk;
+  playerbaseStat.spd += charClass.spd;
+  playerbaseStat.agi += charClass.agi;
+  playerbaseStat.def += charClass.def;
+  playerbaseStat.res += charClass.res;
+  playerbaseStat.hp += charClass.hp;
+  console.log(playerbaseStat);
+  log.innerText += "small boing boing, EXPLOSIOON";
+  updateAttributes();
+  update(locations[4]);
+}
+function phase1D() {
+  const charClass = {
+    name: "CorruptPriest",
+    str: 0,
+    mgk: 20,
+    spd: 10,
+    agi: 0,
+    def: 15,
+    res: 15,
+    hp: 120,
+    classImage: "newimages/Priest.png",
+    classBgCard: "newimages/descrip4.jpg" 
+  }
+  bgDescripAvatar(charClass.classBgCard, charClass.classImage);
+  characterClass = charClass.name;
+  playerbaseStat.str += charClass.str;
+  playerbaseStat.mgk += charClass.mgk;
+  playerbaseStat.spd += charClass.spd;
+  playerbaseStat.agi += charClass.agi;
+  playerbaseStat.def += charClass.def;
+  playerbaseStat.res += charClass.res;
+  playerbaseStat.hp += charClass.hp;
+  console.log(playerbaseStat);
+  log.innerText += " You have become a Priest\nNobody dying in this party. We do it with style by dying slowly with cigarrette and alcohol";
+  updateAttributes();
+  update(locations[4]);
+}
+
+
+
+function updateAttributes() {
+classText.innerText = `${characterClass}`;  
+baseStrText.innerText = `${playerbaseStat.str}`;
+baseMgkText.innerText = `${playerbaseStat.mgk}`;
+baseSpdText.innerText = `${playerbaseStat.spd}`;
+baseAgiText.innerText = `${playerbaseStat.agi}`;
+baseDefText.innerText = `${playerbaseStat.def}`;
+baseResText.innerText = `${playerbaseStat.res}`;
+baseHpText.innerText = `${playerbaseStat.hp}`; 
+}
+
+/*phase2 blessings */
+
+function phase2E() {
+  let diceRoll = Math.round(Math.random()*100);
+  let blessingsNum = 0;
+  console.log(diceRoll);
+  if (diceRoll >= 91 ){ 
+    blessingsNum = 4;
+  } else if (diceRoll < 90 && diceRoll > 81) {
+    blessingsNum = 3;
+  } else if (diceRoll < 80 && diceRoll > 41) {
+    blessingsNum = 2;
+  } else {
+    blessingsNum = 1;
+  }
+  console.log(blessingsNum);
+  blessingRaffle(blessingsNum);
+  
+}
+
+function blessingRaffle(blessingsNum) {
+
+  const blessings = [
+    {name: "FastHands",
+    rarity: "common",
+    buff: "playerbaseStat.agi += 20;"
+    },
+    {name: "FastHands",
+    rarity: "common",
+    buff: "playerbaseStat.agi += 20;"
+    },
+    {name: "QuickSteps",
+    rarity: "common",
+    buff: "playerbaseStat.spd += 20;"
+    },
+    {name: "QuickSteps+",
+    rarity: "intermediate",
+    buff: "playerbaseStat.spd += 40; playerbaseStat.agi += 10;"
+    },
+    {name: "LightWeight",
+    rarity: "common",
+    buff: "playerbaseStat.spd += 30; playerbaseStat.str -= 10;"
+    },
+    {name: "LightWeight",
+    rarity: "common",
+    buff: "playerbaseStat.spd += 30; playerbaseStat.str -= 10;"
+    },
+    {name: "Ironheart",
+    rarity: "common",
+    buff: "playerbaseStat.hp += 40;"
+    },
+    {name: "ThickFat",
+    rarity: "common",
+    buff: "playerbaseStat.res += 20;"
+    },
+    {name: "ThickSkin",
+    rarity: "common",
+    buff: "playerbaseStat.def += 20;"
+    },
+    {name: "ThickFat",
+    rarity: "common",
+    buff: "playerbaseStat.res += 20;"
+    },
+    {name: "ThickSkin",
+    rarity: "common",
+    buff: "playerbaseStat.def += 20;"
+    },
+    {name: "SparklingMana",
+    rarity: "common",
+    buff: "playerbaseStat.mgk += 10; playerbaseStat.res += 10"
+    },
+    {name: "SparklingMana",
+    rarity: "common",
+    buff: "playerbaseStat.mgk += 10; playerbaseStat.res += 10"
+    },
+    {name: "SparklingMana",
+    rarity: "common",
+    buff: "playerbaseStat.mgk += 10; playerbaseStat.res += 10"
+    },
+    {name: "SpideyPower",
+    rarity: "intermediate",
+    buff: "playerbaseStat.str += 50;"
+    },
+    {name: "SpideySense",
+    rarity: "intermediate",
+    buff: "playerbaseStat.agi += 50;"
+    },
+    {name: "GiantMagic",
+    rarity: "intermediate",
+    buff: "playerbaseStat.mgk += 50;"
+    },
+    {name: "SpideyPower",
+    rarity: "intermediate",
+    buff: "playerbaseStat.str += 50;"
+    },
+    {name: "SpideySense",
+    rarity: "intermediate",
+    buff: "playerbaseStat.agi += 50;"
+    },
+    {name: "GiantMagic",
+    rarity: "intermediate",
+    buff: "playerbaseStat.mgk += 50;"
+    },
+    {name: "FlyingRaijin",
+    rarity: "intermediate",
+    buff: "playerbaseStat.spd += 50;"
+    },
+  ]
+  
+  for(let i = 0; i < blessingsNum; i++) {
+   
+    let blessingsIndex = Math.floor(Math.random() * blessings.length);
+    CharacterBlessings.push(blessings[blessingsIndex].name);
+    let blessingTextHtml = `<span class="blessingDisplay ${blessings[blessingsIndex].rarity}"> [${blessings[blessingsIndex].name}] </span>`;
+    blessingTEXT += blessingTextHtml;
+    
+    eval(blessings[blessingsIndex].buff);
+    updateAttributes();
+  }
+  blessingText.innerHTML = blessingTEXT;
+  console.log(CharacterBlessings);
+}
+function bgDescripAvatar(bgCardImage, Avatar) {
+  backgDescrip.style.backgroundImage = `url('${bgCardImage}')`;
+  avatarCard.style.backgroundImage = `url('${Avatar}')`;
+
+}
+
