@@ -68,3 +68,87 @@ button {
   gap: 5px;
   color: #0a0a23;
 }
+
+#descript {
+  position: absolute;
+  top: 60px;
+  justify-content: center;
+  width: 400px;
+  height: 375px;
+  background-color: rgba(124, 73, 6);
+  border-radius: 50px;
+  border: 2px solid #f1f1f1;
+  display: grid;
+  grid-template-columns: 0.8fr 1fr;
+  overflow-y: hidden;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-blend-mode: lighten, hue ;
+}
+#characterDisplay {
+  margin: 0.5rem;
+  height: 350px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+#characterDisplayBg {
+  margin: 0.5rem;
+  height: 350px;
+  border-radius: 25px 25px 0 0;
+  background: linear-gradient(180deg, #0a0a23 90%, rgba(124, 73, 6));
+}
+
+.characterInfo {
+  margin: 2px;
+  padding: 2px;
+  p {
+
+    margin: 0;
+  }
+  div {
+    background-color: rgba(114, 68, 7, 0.2);
+    background: linear-gradient(90deg, rgba(80, 43, 7, 0.548) 60%, transparent 100%);
+  }
+  div.box{
+    position: relative;
+    height: 50px;
+    margin: 0;
+    padding: 5px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding-left: 20px;   
+  }
+}
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1; 
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #80d; 
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555; 
+}
+#nameButton, #nameInput {
+  display: none;
+}
+
+.blessingDisplay {
+  font-size: 0.8rem;
+}
+.common {
+  color: green;
+}
+.intermediate {
+  color: blue;
+}
