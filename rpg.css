@@ -54,7 +54,7 @@ button {
   border: 0.2px solid #0a0a23;  
   background-position: center;
   background-size: cover;
-  background-image: url(cover.jpg);
+  background-image: url(bgimages/cover.jpg);
   transition: background-image 1s ease-in-out;
   overflow: hidden;
 }
