@@ -167,84 +167,84 @@ const locations = [
         "button text": ["Go to store", "Go to dungeon", "Go to guild", "Go to Inn"],
         "button functions": [goStore, goCave, goGuild, goInn],
         text: "You are in the town square. You see a sign that says \"Store\".",
-        bgimage: "town.jpg"
+        bgimage: "bgimages/town.jpg"
     },
     {
         name: "store",
         "button text": ["Buy equipment", "Buy weapon", "Buy Equipment", "Go to town square"],
         "button functions": [buyItem, buyWeapon, buyEquipment, goTown],
         text: "You enter the store.",
-        bgimage: "town_store.jpg"
+        bgimage: "bgimages/town_store.jpg"
     },
     {
         name: "Intro",
         "button text": ["How to play", "Ourbackstory", "Records", "Start the game"],
         "button functions": [tutorials, tutorials/*backstory*/, tutorials/*record*/, phase1],
         text: "Welcome to Dragon Quest. You must defeat the dragon that eat humans.\n Should we start the game? Use the buttons above.",
-        bgimage: "cover.jpg"
+        bgimage: "bgimages/cover.jpg"
     },
     {
       name: "phase1",
       "button text": ["choice A", "choice B", "choice C", "choice D"],
       "button functions": [phase1A, phase1B, phase1C, phase1D],
       text: "four gods has gazed upon ur travelling soul while in passing..\nchoose one of the gods gift\n",
-      bgimage: "cover.jpg"
+      bgimage: "bgimages/cover.jpg"
     },
     {
       name: "phase2",
       "button text": ["choice E", "choice F", "choice G", "choice H"],
       "button functions": [ phase2E, phase2E, phase2E, phase2E ],
       text: "one of the gods is pleased with your choice \n ...while one gods isnt\n choose again",
-      bgimage: "cover.jpg"
+      bgimage: "bgimages/cover.jpg"
     },
     {
       name: "phase3",
       "button text": ["choice A", "choice B", "choice C", "choice D"],
       "button functions": [ tutorials, tutorials, tutorials, goTown], /*[phase3A, phase3B, phase3C, phase3D], */
       text: "You're almost by the end of the river.. Choose one last time.. ",
-      bgimage: "cover.jpg"
+      bgimage: "bgimages/cover.jpg"
     },
     {
       name: "goGuild",
       "button text": ["Go to quest board", "Go to mess hall", "Go to desk", "contribute"],
       "button functions": [ tutorials, tutorials, tutorials, goTown],/*[getQuest, adventurerHall, gotoReceptionist, contributeToGuild],*/
       text: "You enter the guild. Its as chaotic and lively as ever.",
-      bgimage: "cave.jpg"
+      bgimage: "bgimages/cave.jpg"
     },
     {
         name: "goInn",
         "button text": ["Buy Foods", "Check-in", "Ask for info", "Gamble"],
         "button functions": [ tutorials, tutorials, tutorials, goTown],/*[attack, dodge, goTown, gambleInn],*/
         text: "You are fighting a monster.",
-        bgimage: "cave2.jpg"
+        bgimage: "bgimages/cave2.jpg"
     },
     {
       name: "Buy Equipment",
       "button text": ["Buy equipment", "Buy weapon", "Buy Equipment", "Go to town square"],
       "button functions": [buyItem, buyWeapon, buyEquipment, goTown],
       text: "You enter the store.",
-      bgimage: "town_store.jpg"
+      bgimage: "bgimages/town_store.jpg"
     },
     {
         name: "kill monster",
         "button text": ["Go to town square", "Go to town square", "Go to town square"],
         "button functions": [goTown, goTown, goTown],
         text: 'The monster screams "Arg!" as it dies. You gain experience points and find gold.',
-        bgimage: "town.jpg"
+        bgimage: "bgimages/town.jpg"
     },
     {
         name: "lose",
         "button text": ["REPLAY?", "REPLAY?", "REPLAY?"],
         "button functions": [restart, restart, restart],
         text: "You die. ☠️",
-        bgimage: "town.jpg"
+        bgimage: "bgimages/town.jpg"
     },
     { 
         name: "win", 
         "button text": ["REPLAY?", "REPLAY?", "REPLAY?"], 
         "button functions": [restart, restart, restart], 
         text: "You defeat the dragon! YOU WIN THE GAME! 🎉" ,
-        bgimage: "town.jpg"
+        bgimage: "bgimages/town.jpg"
     },
     {
         name: "easter egg",
