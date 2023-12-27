@@ -35,7 +35,8 @@
         <div id="logs">
             
         </div>
-        <div id="descript">
+        
+        <div id="descript" aria-hidden="true">
         <div id="characterDisplayBg">
             
             <div id="characterDisplay">
@@ -60,11 +61,17 @@
                 <p>HP :<strong><span id="baseStatTextHp"></span></strong> + <strong><span id="inventoryStatHp"></span> </strong></p>
             </div>
             <div class="characterInfo">
-                <div class="box"><p>SKILLS : <strong><span id="skillsetsText"></span></strong></p></div>
+                <div class="box"><p>SKILLS : <strong><span id="skillsSetsText"></span></strong></p></div>
                 <div class="box"><p>BLESSINGS : <strong><span id="blessingText"></span></strong></p></div>
             </div>
-        </div> <img src="newimages/hoverShield.png" alt="">
         </div>
+        </div>
+    </div>
+    <div class="inGameIconsLeft">
+        <button id="characterProfileIcon" aria-controls="myDiv" aria-expanded="false" aria-label="Toggle Div"
+        > Character </button>
+        <button id="characterInventoryIcon" aria-controls="myDiv" aria-expanded="false" aria-label="Toggle Div"
+        > Inventory </button>
     </div>
     
   
