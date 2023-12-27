@@ -181,10 +181,6 @@ button {
 
 .inGameIconsLeft {
 display: flex;
-transform-origin: top right;
-position: absolute;
-top: 50px;
-left: 150px;
 justify-content: center;
 flex-direction: row;
   button {
