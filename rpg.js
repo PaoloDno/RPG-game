@@ -9,6 +9,8 @@ let inventoryWeapon = ["stick"];
 let inventoryEquipment = ["adventurer gear"];
 let CharSkills = ["normal atk"];
 let blessingTEXT = "";
+let skillCardsTEXT = "";
+let skillNumStart = 0;
 let CharStatus = [
 { name: "poison", turn: 999  },
 { name: "stun", turn: 1 },
@@ -20,6 +22,7 @@ let characterClass;
 let hoverImage = "";
 let AvatarImage = "";
 
+
 const backgDescrip = document.querySelector("#descript");
 const avatarCard = document.querySelector("#characterDisplay");
 const namebutton = document.querySelector("#nameButton");
@@ -27,6 +30,7 @@ const button1 = document.querySelector("#button1");
 const button2 = document.querySelector("#button2");
 const button3 = document.querySelector("#button3");
 const button4 = document.querySelector("#button4");
+const button5 = document.querySelector("#characterProfileIcon");
 const text = document.querySelector("#text");
 const xpText = document.querySelector("#xpText");
 const healthText = document.querySelector("#healthText");
@@ -36,9 +40,10 @@ const monsterName = document.querySelector("#monsterName");
 const monsterHealthText =document.querySelector("#monsterHealth");
 const monitor = document.querySelector("#game-monitor");
 const log = document.querySelector("#logs");
-
+const inGameIconsLeft = document.querySelector('.inGameIconsLeft');
 
 /* attribute */
+let charName = document.querySelector('#nameInput');
 const charNameText = document.querySelector("#nameText");
 const classText = document.querySelector("#classText");
 const baseStrText = document.querySelector("#baseStatTextStr");
@@ -59,7 +64,7 @@ const addedHpText = document.querySelector("#inventoryStatHp");
 
 
 
-const skillsSetText = document.querySelector("#SkillsetsText");
+const skillsSetText = document.querySelector("#skillsSetsText");
 const blessingDisplay = document.querySelector("#blessingDisplay");
 const blessingText = document.querySelector("#blessingText");
 
@@ -209,14 +214,21 @@ const locations = [
       bgimage: "bgimages/afterlife.jpg"
     },
     {
-      name: "goGuild", //6
+      name: "NameInput", //6
+      "button text": ["name", "your", "character", "to continue"],
+      "button functions": [ tutorials2, tutorials2, tutorials2, tutorials2],/*[getQuest, adventurerHall, gotoReceptionist, contributeToGuild],*/
+      text: "last thing.. what is your name",
+      bgimage: "bgimages/afterlife.jpg"
+    },
+    {
+      name: "goGuild", //7
       "button text": ["Go to quest board", "Go to mess hall", "Go to desk", "contribute"],
       "button functions": [ tutorials, tutorials, tutorials, goTown],/*[getQuest, adventurerHall, gotoReceptionist, contributeToGuild],*/
       text: "You enter the guild. Its as chaotic and lively as ever.",
       bgimage: "bgimages/cave.jpg"
     },
     {
-        name: "goInn", //7
+        name: "goInn", //8
         "button text": ["Buy Foods", "Check-in", "Ask for info", "Gamble"],
         "button functions": [ tutorials, tutorials, tutorials, goTown],/*[attack, dodge, goTown, gambleInn],*/
         text: "You are fighting a monster.",
@@ -263,6 +275,7 @@ button1.onclick = tutorials;
 button2.onclick = tutorials;
 button3.onclick = tutorials;/*records;*/
 button4.onclick = phase1;/*Start;*/
+
 nameButton.onclick = declareCharName;
 
 function update(location) {
@@ -477,6 +490,11 @@ function tutorials() {
   text.innerText = "click buttons above so something might happen, goodluck!!";
   log.innerText += "The game isnt final yet but i plan to put a tutorial here\n";
 }
+function tutorials2() {
+  update(locations[6])
+  text.innerText = "click buttons above so something might happen, goodluck!!";
+  log.innerText += "Name ur character\n";
+}
 function start() {
   update(locations[99])
 }
@@ -514,14 +532,33 @@ function pick(guess) {
 
 
 function declareCharName() {
-  let charName = document.querySelector('#nameInput');
+ 
   const characterName = charName.value;
   nameButton.style.display = 'none';
   charName.style.display = 'none';
   nameText.innerText = characterName;
   console.log(characterName);
-}
+  log.innerText += "START YOUR JOURNEY TO KILL THE DRAGON!";
+  
 
+  update(locations[0]);
+}
+button5.addEventListener('click', function() {
+  const expanded  = this.getAttribute('aria-expanded') === 'true' || false;
+  
+  if (expanded) {
+    this.setAttribute('aria-expanded', 'false');
+    backgDescrip.classList.add('animate-scale')
+    backgDescrip.style.display = 'none'; // Hide the div
+    backgDescrip.setAttribute('aria-hidden', 'true');
+    ; 
+  } else {
+    this.setAttribute('aria-expanded', 'true');
+    backgDescrip.classList.remove('animate-scale'); 
+    backgDescrip.style.display = 'grid'; // Show the div
+    backgDescrip.setAttribute('aria-hidden', 'false');
+  }
+});
 
 
 function phase1() {
@@ -684,6 +721,7 @@ function phase1D() {
 
 
 function updateAttributes() {
+
 classText.innerText = `${characterClass}`;  
 baseStrText.innerText = `${playerbaseStat.str}`;
 baseMgkText.innerText = `${playerbaseStat.mgk}`;
@@ -702,9 +740,9 @@ function phase2E() {
   console.log(diceRoll);
   if (diceRoll >= 91 ){ 
     blessingsNum = 4;
-  } else if (diceRoll < 90 && diceRoll > 81) {
+  } else if (diceRoll < 90 && diceRoll > 61) {
     blessingsNum = 3;
-  } else if (diceRoll < 80 && diceRoll > 41) {
+  } else if (diceRoll < 60 && diceRoll > 21) {
     blessingsNum = 2;
   } else {
     blessingsNum = 1;
@@ -817,8 +855,8 @@ function blessingRaffle(blessingsNum) {
   blessingText.innerHTML = blessingTEXT;
   console.log(CharacterBlessings);
   let diceRoll2 = Math.floor(Math.random()*100);
-  if (diceRoll2 > 70) {
-    log.innerText += "\n the godd would like to give you more";
+  if (diceRoll2 > 60) {
+    log.innerText += "\n the gods would like to give you more";
     update(locations[4]);
   } else {
     update(locations[5]);
@@ -870,28 +908,75 @@ const skillDex = {
 
   lizardskin: new Skill("Lizardskin", "buff", "common", "ally", 0, 0, 20,  0, "res += res + (mgk * 1.2); turn = 2;", 20, 50),
   windaura: new Skill("Windaura", "buff", "common", "ally", 0, 0, 20,  0, "spd += 30; turn = 3;", 20, 50),
-
-
 }
+skillDexLibrary = [ "normalatk", "manaball", "manablast", "manabarrier", "shieldbash", "bullcharge", "slash", "heavyslash", "heal", "hugeheal", "lizardskin", "windaura"];
 
+
+/*
+console.log(skillDex["shieldbash"].type);
+locations.forEach((item , index) => {
+  console.log(index+ skillDexLibrary[index]);
+});
+console.log(skillDex["bullcharge"]); */
 
 function phase3I() {
   let diceRoll3 = Math.round(Math.random()*100);
   console.log(diceRoll3);
-  let skillNumStart = 0;
+  
+
   if (diceRoll3 >= 91 ){ 
-    skillNumStart = 4;
+    skillNumStart = 5;
   } else if (diceRoll3 < 90 && diceRoll3 > 81) {
-    skillNumStart = 3;
+    skillNumStart = 4;
   } else if (diceRoll3 < 80 && diceRoll3 > 41) {
-    skillNumStart = 2;
+    skillNumStart = 3;
   } else {
-    skillNumStart = 1;
+    skillNumStart = 2;
   }
+  let skillBunos = [];
+  skillBunos.push(skillDexLibrary[0]);
+
+  for (let i = 0 ; i < skillDexLibrary.length; i++){
+  if (playerbaseStat.str > 15 && i >= 6 & i <= 7) {
+    skillBunos.push(skillDexLibrary[i]);
+  }
+  if ((playerbaseStat.def >= 15 || playerbaseStat.res >= 15) && i >= 3 & i <= 5) {
+    skillBunos.push(skillDexLibrary[i]);
+  }
+  if (playerbaseStat.mgk > 15 && i >= 2 & i <= 3) {
+    skillBunos.push(skillDexLibrary[i]);
+  }
+  if (playerbaseStat.hp > 150 && i >= 9 & i <= 12) {
+    skillBunos.push(skillDexLibrary[i]);
+  }
+ 
+}
   
   
+  for (let i = 0; i < skillNumStart; i++) {
+    
+    let skillBunosIndex = Math.floor(Math.random() * skillBunos.length);
+    CharSkills.push(skillBunos[skillBunosIndex]);
+    let skillCardsTT = `<span class="skillDisplay ${skillDex[skillBunos[skillBunosIndex]].rarity}"> [${skillBunos[skillBunosIndex]}] </span>`;
+    skillCardsTEXT += skillCardsTT;
+    log.innerText += "\n You recieved the skill named " + skillBunos[skillBunosIndex] + "\n with a [" + skillDex[skillBunos[skillBunosIndex]].rarity + "] rarity.\n";
+    
+  }
+  console.log(skillCardsTEXT);
+  console.log(CharSkills);
+  skillsSetText.innerHTML = skillCardsTEXT;
+
   
-  
+  let diceRoll2 = Math.floor(Math.random()*100);
+  if (diceRoll2 > 50) {
+    log.innerText += "\n the gods would like to give you more";
+    update(locations[5]);
+  } else {
+    nameButton.style.display = 'block';
+    charName.style.display = 'block';
+    update(locations[6]);
+  }
+ 
 }
 
 /*
@@ -936,7 +1021,8 @@ function skillRollRaffle(num) {
 avatarCard.addEventListener('mouseover', () => {
   setTimeout(function() {
     avatarCard.style.backgroundImage = `url('${hoverImage}')`;
-    avatarCard.style.transform = 'scaleY(1.1)';
+    avatarCard.style.transform = 'scaleY(1.15)';
+   
     console.log(hoverImage);
     console.log(skillDex["manaball"].cost);   
 }, 500);
@@ -946,6 +1032,7 @@ avatarCard.addEventListener('mouseover', () => {
 avatarCard.addEventListener('mouseout', () => {
   setTimeout(function() {
   avatarCard.style.backgroundImage = `url('${AvatarImage}')`;
+  avatarCard.style.transform = 'scaleY(1)';
   console.log(AvatarImage);
 }, 200);
 });
