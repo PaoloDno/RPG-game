@@ -186,8 +186,7 @@ position: absolute;
 top: 50px;
 left: 150px;
 justify-content: center;
-flex-direction: row-reverse;
-transform: rotate(-90deg);
+flex-direction: row;
   button {
   border-radius: 5px 5px 0 0;
   margin: 3px;
