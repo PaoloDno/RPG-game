@@ -13,8 +13,12 @@ let CharStatus = [
 { name: "poison", turn: 999  },
 { name: "stun", turn: 1 },
 ];
-let CharacterBlessings = ["fast"];
+let raffleSkill = [];
+let CharacterSkillList = [];
+let CharacterBlessings = [];
 let characterClass;
+let hoverImage = "";
+let AvatarImage = "";
 
 const backgDescrip = document.querySelector("#descript");
 const avatarCard = document.querySelector("#characterDisplay");
@@ -163,56 +167,56 @@ const monsters = [
 ]
 const locations = [
     {
-        name: "town square",
+        name: "town square", //0
         "button text": ["Go to store", "Go to dungeon", "Go to guild", "Go to Inn"],
         "button functions": [goStore, goCave, goGuild, goInn],
         text: "You are in the town square. You see a sign that says \"Store\".",
         bgimage: "bgimages/town.jpg"
     },
     {
-        name: "store",
+        name: "store", //1
         "button text": ["Buy equipment", "Buy weapon", "Buy Equipment", "Go to town square"],
         "button functions": [buyItem, buyWeapon, buyEquipment, goTown],
         text: "You enter the store.",
         bgimage: "bgimages/town_store.jpg"
     },
     {
-        name: "Intro",
+        name: "Intro", //2
         "button text": ["How to play", "Ourbackstory", "Records", "Start the game"],
         "button functions": [tutorials, tutorials/*backstory*/, tutorials/*record*/, phase1],
         text: "Welcome to Dragon Quest. You must defeat the dragon that eat humans.\n Should we start the game? Use the buttons above.",
         bgimage: "bgimages/cover.jpg"
     },
     {
-      name: "phase1",
-      "button text": ["choice A", "choice B", "choice C", "choice D"],
+      name: "phase1", //3
+      "button text": ["Shield", "Ninja", "Wizard", "Priest"],
       "button functions": [phase1A, phase1B, phase1C, phase1D],
       text: "four gods has gazed upon ur travelling soul while in passing..\nchoose one of the gods gift\n",
-      bgimage: "bgimages/cover.jpg"
+      bgimage: "bgimages/afterlife.jpg"
     },
     {
-      name: "phase2",
-      "button text": ["choice E", "choice F", "choice G", "choice H"],
+      name: "phase2", //4
+      "button text": ["random", "random", "random", "random"],
       "button functions": [ phase2E, phase2E, phase2E, phase2E ],
-      text: "one of the gods is pleased with your choice \n ...while one gods isnt\n choose again",
-      bgimage: "bgimages/cover.jpg"
+      text: "one of the gods is pleased with your choice \n ...they want to give you a blessing choose a god",
+      bgimage: "bgimages/afterlife.jpg"
     },
     {
-      name: "phase3",
-      "button text": ["choice A", "choice B", "choice C", "choice D"],
-      "button functions": [ tutorials, tutorials, tutorials, goTown], /*[phase3A, phase3B, phase3C, phase3D], */
+      name: "phase3", //5
+      "button text": ["skill", "skill", "skill", "skill"],
+      "button functions": [phase3I, phase3I, phase3I, phase3I], /*[phase3A, phase3B, phase3C, phase3D], */
       text: "You're almost by the end of the river.. Choose one last time.. ",
-      bgimage: "bgimages/cover.jpg"
+      bgimage: "bgimages/afterlife.jpg"
     },
     {
-      name: "goGuild",
+      name: "goGuild", //6
       "button text": ["Go to quest board", "Go to mess hall", "Go to desk", "contribute"],
       "button functions": [ tutorials, tutorials, tutorials, goTown],/*[getQuest, adventurerHall, gotoReceptionist, contributeToGuild],*/
       text: "You enter the guild. Its as chaotic and lively as ever.",
       bgimage: "bgimages/cave.jpg"
     },
     {
-        name: "goInn",
+        name: "goInn", //7
         "button text": ["Buy Foods", "Check-in", "Ask for info", "Gamble"],
         "button functions": [ tutorials, tutorials, tutorials, goTown],/*[attack, dodge, goTown, gambleInn],*/
         text: "You are fighting a monster.",
@@ -522,7 +526,7 @@ function declareCharName() {
 
 function phase1() {
   log.innerText += "You are being reborn to another world.. \n"
-  log.innerText += "Your physical form and attributes depen ds on your choices while in passing \n"
+  log.innerText += "Your physical form  depends on your choices while in passing \n"
   log.innerText += "Choose your destiny \n"
   update(locations[3]);
 }
@@ -537,6 +541,7 @@ function phase1A() {
     res: 10,
     hp: 150,
     classImage: "newimages/Shield.png",
+    classHoverImage: "newimages/hoverShield.png",
     BgCard: "newimages/descrip1.jpg"
   }
   bgDescripAvatar(charClass.BgCard, charClass.classImage);
@@ -550,8 +555,17 @@ function phase1A() {
   playerbaseStat.hp += charClass.hp;
   console.log(playerbaseStat);
   log.innerText += "You are the ShieldHero, a male edgy MC you have no bitches\n that turned furry";
+  AvatarImage = charClass.classImage;
+  hoverImage = charClass.classHoverImage;
+
   updateAttributes();
-  update(locations[4]);
+    setTimeout(function() {
+      backgDescrip.style.display = 'grid';
+      backgDescrip.style.opacity = '1';     
+}, 1000)
+  setTimeout(function() {
+    update(locations[4]); 
+}, 2000)
 }
 function phase1B() {
   const charClass = {
@@ -564,6 +578,7 @@ function phase1B() {
     res: 0,
     hp: 110,
     classImage: "newimages/Ninja.png",
+    classHoverImage: "newimages/hoverNinja.png",
     classBgCard: "newimages/descrip2.jpg"
   }
   bgDescripAvatar(charClass.classBgCard, charClass.classImage);
@@ -577,8 +592,18 @@ function phase1B() {
   playerbaseStat.hp += charClass.hp;
   console.log(playerbaseStat);
   log.innerText += "Big booby ninja, high speed and killer dmg";
+  AvatarImage = charClass.classImage;
+  hoverImage = charClass.classHoverImage;
+  
+
   updateAttributes();
-  update(locations[4]);
+  setTimeout(function() {
+    backgDescrip.style.display = 'grid';
+    backgDescrip.style.opacity = '1';     
+}, 1000)
+  setTimeout(function() {
+    update(locations[4]); 
+}, 2000)
 }
 function phase1C() {
   const charClass = {
@@ -591,6 +616,7 @@ function phase1C() {
     res: 5,
     hp: 110,
     classImage: "newimages/Wizard.png",
+    classHoverImage: "newimages/hoverWizard.png",
     classBgCard: "newimages/descrip3.jpg"
   }
   bgDescripAvatar(charClass.classBgCard, charClass.classImage);
@@ -604,8 +630,16 @@ function phase1C() {
   playerbaseStat.hp += charClass.hp;
   console.log(playerbaseStat);
   log.innerText += "small boing boing, EXPLOSIOON";
+  AvatarImage = charClass.classImage;
+  hoverImage = charClass.classHoverImage;
   updateAttributes();
-  update(locations[4]);
+  setTimeout(function() {
+    backgDescrip.style.display = 'grid';
+    backgDescrip.style.opacity = '1';     
+}, 1000)
+  setTimeout(function() {
+    update(locations[4]); 
+}, 2000)
 }
 function phase1D() {
   const charClass = {
@@ -618,6 +652,7 @@ function phase1D() {
     res: 15,
     hp: 120,
     classImage: "newimages/Priest.png",
+    classHoverImage: "newimages/hoverPriest.png",
     classBgCard: "newimages/descrip4.jpg" 
   }
   bgDescripAvatar(charClass.classBgCard, charClass.classImage);
@@ -629,10 +664,21 @@ function phase1D() {
   playerbaseStat.def += charClass.def;
   playerbaseStat.res += charClass.res;
   playerbaseStat.hp += charClass.hp;
+  HoverImage = charClass.classHoverImage;
   console.log(playerbaseStat);
   log.innerText += " You have become a Priest\nNobody dying in this party. We do it with style by dying slowly with cigarrette and alcohol";
+  AvatarImage = charClass.classImage;
+  hoverImage = charClass.classHoverImage;
+
   updateAttributes();
-  update(locations[4]);
+  setTimeout(function() {
+    backgDescrip.style.display = 'grid';
+    backgDescrip.style.opacity = '1';
+    avatarCard.style.opacity = "1";     
+}, 500);
+  setTimeout(function() {
+    update(locations[4]); 
+}, 1000);
 }
 
 
@@ -645,7 +691,7 @@ baseSpdText.innerText = `${playerbaseStat.spd}`;
 baseAgiText.innerText = `${playerbaseStat.agi}`;
 baseDefText.innerText = `${playerbaseStat.def}`;
 baseResText.innerText = `${playerbaseStat.res}`;
-baseHpText.innerText = `${playerbaseStat.hp}`; 
+baseHpText.innerText = `${playerbaseStat.hp}`;
 }
 
 /*phase2 blessings */
@@ -664,6 +710,7 @@ function phase2E() {
     blessingsNum = 1;
   }
   console.log(blessingsNum);
+  
   blessingRaffle(blessingsNum);
   
 }
@@ -763,16 +810,144 @@ function blessingRaffle(blessingsNum) {
     CharacterBlessings.push(blessings[blessingsIndex].name);
     let blessingTextHtml = `<span class="blessingDisplay ${blessings[blessingsIndex].rarity}"> [${blessings[blessingsIndex].name}] </span>`;
     blessingTEXT += blessingTextHtml;
-    
+    log.innerText += "\n You recieved the blessing named " + blessings[blessingsIndex].name + "\n with a [" + blessings[blessingsIndex].rarity + "] rarity and effect of [" + blessings[blessingsIndex].buff + "] .\n";
     eval(blessings[blessingsIndex].buff);
     updateAttributes();
   }
   blessingText.innerHTML = blessingTEXT;
   console.log(CharacterBlessings);
+  let diceRoll2 = Math.floor(Math.random()*100);
+  if (diceRoll2 > 70) {
+    log.innerText += "\n the godd would like to give you more";
+    update(locations[4]);
+  } else {
+    update(locations[5]);
+  }
 }
 function bgDescripAvatar(bgCardImage, Avatar) {
   backgDescrip.style.backgroundImage = `url('${bgCardImage}')`;
   avatarCard.style.backgroundImage = `url('${Avatar}')`;
+ 
+}
+
+
+class Skill {
+  constructor() {
+    this.market = [];
+  }
+
+  constructor(name, type, rarity, target, baseDamage = 0, additionalDamage, baseHeal = 0, additionalHeal, special, manaCost = 0, cost = 0) {
+    this.name = name;
+    this.type = type;
+    this.rarity = rarity;
+    this.target = target;
+    this.baseDamage = baseDamage;
+    this.additionalDamage = additionalDamage;
+    this.baseHeal = baseHeal;
+    this.additionalHeal = additionalHeal;
+    this.special = special;
+    this.cost = cost;
+    this.manaCost = manaCost;
+  }
+
+  
+}
+
+// Skills available in the market
+const skillDex = {
+  normalatk: new Skill("Normal Atk", "damage", "common", "enemy", 0, "atk + mgk", 0, 0, "none", 0, 50),
+
+  manaball: new Skill("Manaball", "damage", "common", "enemy", 20, "mgk * 1.5", 0, 0, "none", 20, 50),
+  manablast: new Skill("Manablast", "damage", "common", "enemy", 20, "mgk * 2.2", 0, 0, "none", 20, 50),
+  manabarrier: new Skill("Manabarrier", "shield", "common", "ally", 0, 0, 0, 0, "shield = 2 * (res * mgk);", 20, 50),
+  
+  shieldbash: new Skill("Shieldbash", "damage", "common", "enemy", 0, 0, 20, "def + res", "none", 0, 50),
+  bullcharge: new Skill("Bullcharge", "damage", "common", "enemy", 0, 0, 20, "(def + res)* 1.2", "none", 0, 50),
+
+  slash: new Skill("Slash", "damage", "common", "enemy", 10, "str*1.2", 0, 0, "none", 0, 50),
+  heavyslash: new Skill("Heavyslash", "damage", "common", "enemy", 10, "str * 2", 0, 0, "none", 0, 50),
+
+  heal: new Skill("Heal", "heal", "common", "ally", 0, 0, 20, "mgk * 2", "none", 20, 50),
+  hugeheal: new Skill("Hugeheal", "heal", "common", "ally", 0, 0, 20, "mgk * 2", "none", 20, 50),
+
+  lizardskin: new Skill("Lizardskin", "buff", "common", "ally", 0, 0, 20,  0, "res += res + (mgk * 1.2); turn = 2;", 20, 50),
+  windaura: new Skill("Windaura", "buff", "common", "ally", 0, 0, 20,  0, "spd += 30; turn = 3;", 20, 50),
+
 
 }
 
+
+function phase3I() {
+  let diceRoll3 = Math.round(Math.random()*100);
+  console.log(diceRoll3);
+  let skillNumStart = 0;
+  if (diceRoll3 >= 91 ){ 
+    skillNumStart = 4;
+  } else if (diceRoll3 < 90 && diceRoll3 > 81) {
+    skillNumStart = 3;
+  } else if (diceRoll3 < 80 && diceRoll3 > 41) {
+    skillNumStart = 2;
+  } else {
+    skillNumStart = 1;
+  }
+  
+  
+  
+  
+}
+
+/*
+function skillRaffle() {
+  if(playerbaseStat.str > 20) {
+    
+  }
+  if(playerbaseStat.mgk > 20) {
+    
+  }
+  if(playerbaseStat.def > 20
+    || playerbaseStat.res > 20) {
+    
+  }
+  if(playerbaseStat.agi > 20) {
+    
+  }
+}
+
+function skillRollRaffle(num) {
+  for(let i = 0; i < num; i++){
+
+  }
+}
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//event listeners
+
+avatarCard.addEventListener('mouseover', () => {
+  setTimeout(function() {
+    avatarCard.style.backgroundImage = `url('${hoverImage}')`;
+    avatarCard.style.transform = 'scaleY(1.1)';
+    console.log(hoverImage);
+    console.log(skillDex["manaball"].cost);   
+}, 500);
+  
+});
+
+avatarCard.addEventListener('mouseout', () => {
+  setTimeout(function() {
+  avatarCard.style.backgroundImage = `url('${AvatarImage}')`;
+  console.log(AvatarImage);
+}, 200);
+});
