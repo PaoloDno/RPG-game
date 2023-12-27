@@ -832,9 +832,7 @@ function bgDescripAvatar(bgCardImage, Avatar) {
 
 
 class Skill {
-  constructor() {
-    this.market = [];
-  }
+
 
   constructor(name, type, rarity, target, baseDamage = 0, additionalDamage, baseHeal = 0, additionalHeal, special, manaCost = 0, cost = 0) {
     this.name = name;
