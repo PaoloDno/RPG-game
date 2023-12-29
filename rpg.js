@@ -1,6 +1,8 @@
-let xp = 0;
-let health = 100;
-let gold = 50;
+let xP = 0;
+let healtH = 100;
+let manA = 100;
+let golD = 50;
+let charLevel = 0;
 let currentWeapon = 0;
 let currentEquipment = 0;
 let fighting;
@@ -11,6 +13,8 @@ let CharSkills = ["normal atk"];
 let blessingTEXT = "";
 let skillCardsTEXT = "";
 let skillNumStart = 0;
+let characterName = "";
+let towndistance = 0;
 let CharStatus = [
 { name: "poison", turn: 999  },
 { name: "stun", turn: 1 },
@@ -32,6 +36,7 @@ const button3 = document.querySelector("#button3");
 const button4 = document.querySelector("#button4");
 const button5 = document.querySelector("#characterProfileIcon");
 const text = document.querySelector("#text");
+const manaText = document.querySelector("#manaText");
 const xpText = document.querySelector("#xpText");
 const healthText = document.querySelector("#healthText");
 const goldText = document.querySelector("#goldText");
@@ -41,10 +46,12 @@ const monsterHealthText =document.querySelector("#monsterHealth");
 const monitor = document.querySelector("#game-monitor");
 const log = document.querySelector("#logs");
 const inGameIconsLeft = document.querySelector('.inGameIconsLeft');
-
+const modal1 = document.querySelector("#enterCharacterName");
+const containersForTheeMonsters = document.querySelector(".containersForTheeMonsters");
+const monsterfightcards = document.querySelector("#monsterfightcards");
 /* attribute */
 let charName = document.querySelector('#nameInput');
-const charNameText = document.querySelector("#nameText");
+const nameText = document.querySelector("#nameText");
 const classText = document.querySelector("#classText");
 const baseStrText = document.querySelector("#baseStatTextStr");
 const baseMgkText = document.querySelector("#baseStatTextMgk");
@@ -99,82 +106,96 @@ const playerbaseStat =
     res: 10,
     hp: 100
   }
-
+let maxhealtH = Math.floor(playerbaseStat.hp + ((playerbaseStat.res *5 + playerbaseStat.def*5 / 2))); 
+let   maxManA = Math.floor(100 + (playerbaseStat.mgk * 5) + playerbaseStat.str);
 const playerskill = [];
 const playerBag = [];
 const monsters = [
-  {
+  { //0
     name: "slime",
     level: 2,
+    health: 100,
+    mana: 100,
     str: 4,
     mgk: 4,
     spd: 4,
     agi: 4,
     def: 10,
     res: 5,
-    hp: 50
+    monsterImage: "monsimages/slime.jpg"
   },
-  {
+  { //1
     name: "goblin",
     level: 10,
+    health: 200,
+    mana: 100,
     str: 25,
     mgk: 0,
     spd: 15,
     agi: 20,
     def: 20,
     res: 20,
-    hp: 100
+    monsterImage: "monsimages/goblin.jpg"
   },
-  {
+  { //2
     name: "goblin shaman",
     level: 15,
+    health: 150,
+    mana: 200,
     str: 5,
     mgk: 35,
     spd: 35,
     agi: 0,
     def: 20,
     res: 20,
-    hp: 120
+    monsterImage: "monsimages/goblinShaman.jpg"
   },
   {
     name: "fanged beast",
     level: 20,
+    health: 400,
+    mana: 200,
     str: 30,
     mgk: 20,
     spd: 30,
     agi: 30,
     def: 40,
     res: 20,
-    hp: 140
+    monsterImage: "monsimages/goblin.jpg"
+
   },
   {
     name: "evolve fanged beast",
     level: 30,
+    health: 500,
+    mana: 400,
     str: 20,
     mgk: 20,
     spd: 50,
     agi: 30,
     def: 40,
     res: 20,
-    hp: 140
+    monsterImage: "monsimages/slime.jpg"
   },
   {
     name: "dragon",
     level: 50,
+    health: 1000,
+    mana: 1000,
     str: 50,
     mgk: 100,
     spd: 30,
     agi: 10,
     def: 200,
     res: 200,
-    hp: 500
+    monsterImage: "monsimages/smug.jpg"
   }
 ]
 const locations = [
     {
         name: "town square", //0
         "button text": ["Go to store", "Go to dungeon", "Go to guild", "Go to Inn"],
-        "button functions": [goStore, goCave, goGuild, goInn],
+        "button functions": [goStore, goDungeon, goGuild, goInn],
         text: "You are in the town square. You see a sign that says \"Store\".",
         bgimage: "bgimages/town.jpg"
     },
@@ -201,14 +222,14 @@ const locations = [
     },
     {
       name: "phase2", //4
-      "button text": ["random", "random", "random", "random"],
+      "button text": ["recieve", "a", "random", "blessing"],
       "button functions": [ phase2E, phase2E, phase2E, phase2E ],
       text: "one of the gods is pleased with your choice \n ...they want to give you a blessing choose a god",
       bgimage: "bgimages/afterlife.jpg"
     },
     {
       name: "phase3", //5
-      "button text": ["skill", "skill", "skill", "skill"],
+      "button text": ["recieve", "a", "random", "skill"],
       "button functions": [phase3I, phase3I, phase3I, phase3I], /*[phase3A, phase3B, phase3C, phase3D], */
       text: "You're almost by the end of the river.. Choose one last time.. ",
       bgimage: "bgimages/afterlife.jpg"
@@ -221,11 +242,18 @@ const locations = [
       bgimage: "bgimages/afterlife.jpg"
     },
     {
-      name: "goGuild", //7
-      "button text": ["Go to quest board", "Go to mess hall", "Go to desk", "contribute"],
-      "button functions": [ tutorials, tutorials, tutorials, goTown],/*[getQuest, adventurerHall, gotoReceptionist, contributeToGuild],*/
-      text: "You enter the guild. Its as chaotic and lively as ever.",
+      name: "goDungeon", //7
+      "button text": ["goblin cave", "unsleeping forest", "far far away", "back to town"],
+      "button functions": [ goGoblin, tutorials, tutorials, goTown],/*[getQuest, adventurerHall, gotoReceptionist, contributeToGuild],*/
+      text: "You enter the goblin cave",
       bgimage: "bgimages/cave.jpg"
+    },
+    {
+    name: "goGoblin", //8
+    "button text": ["forward", "forward", "forward", "back"],
+    "button functions": [ caveEvent, caveEvent,, caveEvent, goTown],/*[getQuest, adventurerHall, gotoReceptionist, contributeToGuild],*/
+    text: "you explore the goblin cave",
+    bgimage: "bgimages/cave.jpg"
     },
     {
         name: "goInn", //8
@@ -246,21 +274,21 @@ const locations = [
         "button text": ["Go to town square", "Go to town square", "Go to town square"],
         "button functions": [goTown, goTown, goTown],
         text: 'The monster screams "Arg!" as it dies. You gain experience points and find gold.',
-        bgimage: "bgimages/town.jpg"
+        bgimage: "bgimages/slime.jpg"
     },
     {
         name: "lose",
         "button text": ["REPLAY?", "REPLAY?", "REPLAY?"],
         "button functions": [restart, restart, restart],
         text: "You die. ☠️",
-        bgimage: "bgimages/town.jpg"
+        bgimage: "bgimages/slime.jpg"
     },
     { 
         name: "win", 
         "button text": ["REPLAY?", "REPLAY?", "REPLAY?"], 
         "button functions": [restart, restart, restart], 
         text: "You defeat the dragon! YOU WIN THE GAME! 🎉" ,
-        bgimage: "bgimages/town.jpg"
+        bgimage: "bgimages/slime.jpg"
     },
     {
         name: "easter egg",
@@ -317,8 +345,8 @@ function buyItem() {
   if (gold >= 10) {
     gold -= 10;
     health += 10;
-    goldText.innerText = gold;
-    healthText.innerText = health;
+    goldText.innerText = golD;
+    healthText.innerText = healtH;
   } else {
     text.innerText = "You do not have enough gold to buy health.";
   }
@@ -329,7 +357,7 @@ function buyWeapon() {
     if (gold >= 30) {
       gold -= 30;
       currentWeapon++;
-      goldText.innerText = gold;
+      goldText.innerText = golD;
       let newWeapon = weapons[currentWeapon].name;
       text.innerText = "You now have a " + newWeapon + ".";
       inventoryWeapon.push(newWeapon);
@@ -348,7 +376,7 @@ function buyEquipment() {
     if (gold >= 30) {
       gold -= 30;
       currentEquipment++;
-      goldText.innerText = gold;
+      goldText.innerText = golD;
       let newEquipment = equipments[currentEquipment].name;
       text.innerText = "You now have a " + newEquipment + ".";
       inventoryEquipment.push(newWeapon);
@@ -365,8 +393,8 @@ function buyEquipment() {
 
 function sellWeapon() {
   if (inventoryEquipment.length > 1) {
-    gold += 15;
-    goldText.innerText = gold;
+    golD += 15;
+    goldText.innerText = golD;
     let currentEquipment = inventoryEquipment.shift();
     text.innerText = "You sold a " + currentEquipment + ".";
     text.innerText += " In your inventory you have: " + inventoryEquipment;
@@ -376,8 +404,8 @@ function sellWeapon() {
 }
 function sellWeapon() {
   if (inventoryWeapon.length > 1) {
-    gold += 15;
-    goldText.innerText = gold;
+    golD += 15;
+    goldText.innerText = golD;
     let currentWeapon = inventoryWeapon.shift();
     text.innerText = "You sold a " + currentWeapon + ".";
     text.innerText += " In your inventory you have: " + inventoryWeapon;
@@ -448,9 +476,17 @@ function dodge() {
 function defeatMonster() {
   gold += Math.floor(monsters[fighting].level * 6.7);
   xp += monsters[fighting].level;
-  goldText.innerText = gold;
+  goldText.innerText = golD;
   xpText.innerText = xp;
   update(locations[4]);
+}
+
+function goGoblin() {
+  update(locations[8]);
+}
+
+function goDungeon() {
+  update(locations[7]);
 }
 
 function lose() {
@@ -467,7 +503,7 @@ function restart() {
   gold = 50;
   currentWeapon = 0;
   inventory = ["stick"];
-  goldText.innerText = gold;
+  goldText.innerText = golD;
   healthText.innerText = health;
   xpText.innerText = xp;
   goTown();
@@ -511,7 +547,7 @@ function pick(guess) {
   if (numbers.indexOf(guess) !== -1) {
     text.innerText += "Right! You win 20 gold!";
     gold += 20;
-    goldText.innerText = gold;
+    goldText.innerText = golD;
   } else {
     text.innerText += "Wrong! You lose 10 health!";
     health -= 10;
@@ -533,14 +569,19 @@ function pick(guess) {
 
 function declareCharName() {
  
-  const characterName = charName.value;
+  characterName = charName.value;
   nameButton.style.display = 'none';
   charName.style.display = 'none';
+  modal1.style.display = 'none';
   nameText.innerText = characterName;
   console.log(characterName);
-  log.innerText += "START YOUR JOURNEY TO KILL THE DRAGON!";
-  
+  console.log(characterName);
 
+  console.log(player1);
+
+  log.innerText += "\nSTART YOUR JOURNEY TO KILL THE DRAGON!";
+  log.innerText += "\n press charater button on top to hide character panel";
+  InitializeCharStatus();
   update(locations[0]);
 }
 button5.addEventListener('click', function() {
@@ -570,12 +611,12 @@ function phase1() {
 function phase1A() {
   const charClass = {
     name: "ShieldHero",
-    str: 30,
+    str: 20,
     mgk: 0,
     spd: 5,
     agi: 0,
-    def: 15,
-    res: 10,
+    def: 20,
+    res: 20,
     hp: 150,
     classImage: "newimages/Shield.png",
     classHoverImage: "newimages/hoverShield.png",
@@ -855,7 +896,7 @@ function blessingRaffle(blessingsNum) {
   blessingText.innerHTML = blessingTEXT;
   console.log(CharacterBlessings);
   let diceRoll2 = Math.floor(Math.random()*100);
-  if (diceRoll2 > 60) {
+  if (diceRoll2 > 80) {
     log.innerText += "\n the gods would like to give you more";
     update(locations[4]);
   } else {
@@ -909,7 +950,6 @@ const skillDex = {
   lizardskin: new Skill("Lizardskin", "buff", "common", "ally", 0, 0, 20,  0, "res += res + (mgk * 1.2); turn = 2;", 20, 50),
   windaura: new Skill("Windaura", "buff", "common", "ally", 0, 0, 20,  0, "spd += 30; turn = 3;", 20, 50),
 }
-skillDexLibrary = [ "normalatk", "manaball", "manablast", "manabarrier", "shieldbash", "bullcharge", "slash", "heavyslash", "heal", "hugeheal", "lizardskin", "windaura"];
 
 
 /*
@@ -920,6 +960,8 @@ locations.forEach((item , index) => {
 console.log(skillDex["bullcharge"]); */
 
 function phase3I() {
+  let skillDexLibrary = [ "normalatk", "manaball", "manablast", "manabarrier", "shieldbash", "bullcharge", "slash", "heavyslash", "heal", "hugeheal", "lizardskin", "windaura"];
+
   let diceRoll3 = Math.round(Math.random()*100);
   console.log(diceRoll3);
   
@@ -956,11 +998,32 @@ function phase3I() {
   for (let i = 0; i < skillNumStart; i++) {
     
     let skillBunosIndex = Math.floor(Math.random() * skillBunos.length);
-    CharSkills.push(skillBunos[skillBunosIndex]);
+    if (CharSkills.includes(skillBunos[skillBunosIndex])) {
+      let diceRoll4 = Math.round(Math.random()*100);
+      if (diceRoll4 >= 81 ){ 
+        playerbaseStat.str += 10;
+        playerbaseStat.mgk += 10;
+        console.log("str and mgk");
+      } else if (diceRoll4 < 80 && diceRoll4 > 61) {
+        playerbaseStat.def += 10;
+        playerbaseStat.res += 10;
+        console.log("def res");
+      } else if (diceRoll4 < 60 && diceRoll4 > 41) {
+        playerbaseStat.spd += 20;
+        console.log("speed");
+      } else {
+        playerbaseStat.hp += 20;
+        playerbaseStat.agi += 10;
+        console.log("hp and agi");
+      }
+      updateAttributes();
+      console.log(`${skillBunos[skillBunosIndex]} is in the skillList already!`);
+    } else {
+      CharSkills.push(skillBunos[skillBunosIndex]);
     let skillCardsTT = `<span class="skillDisplay ${skillDex[skillBunos[skillBunosIndex]].rarity}"> [${skillBunos[skillBunosIndex]}] </span>`;
     skillCardsTEXT += skillCardsTT;
     log.innerText += "\n You recieved the skill named " + skillBunos[skillBunosIndex] + "\n with a [" + skillDex[skillBunos[skillBunosIndex]].rarity + "] rarity.\n";
-    
+    }
   }
   console.log(skillCardsTEXT);
   console.log(CharSkills);
@@ -968,18 +1031,145 @@ function phase3I() {
 
   
   let diceRoll2 = Math.floor(Math.random()*100);
-  if (diceRoll2 > 50) {
+  if (diceRoll2 > 90) {
     log.innerText += "\n the gods would like to give you more";
     update(locations[5]);
   } else {
-    nameButton.style.display = 'block';
+    modal1.style.display = 'flex';
     charName.style.display = 'block';
+    nameButton.style.display = 'block';
     update(locations[6]);
   }
  
 }
 
+function caveEvent() {
+  let diceRoll6 = Math.floor(Math.random()*100);
+  console.log(diceRoll6);
+  if (diceRoll6 > 90) {
+    treasureRoom();
+  }
+  if (diceRoll6 > 80 && diceRoll6 < 89) {
+    campRoom();
+  } else {
+    goblinFight();
+  }
+} 
+function treasureRoom() {
+  console.log("yey tressure");
+  golD += 100;
+  goldText.innerText = golD;
+  towndistance++;
+  goGoblin();
+}
+function campRoom() {
+  healtH += 100;
+  manA += 150;
+  if (healtH > maxhealtH) {
+    health = maxhealtH
+  }
+  if (manA > maxManA) {
+    manA = maxManA;
+  }
+  console.log("refreshing");
+  goGoblin();
+}
+
+function goblinFight() {
+  let diceRoll6 = Math.floor(Math.random()*100);
+  let enemyNum = 0;
+  if (diceRoll6 > 80) {
+    enemyNum = 3;
+  }
+  if (diceRoll6 > 50 && diceRoll6 < 79) {
+    enemyNum = 2;
+  } else {
+    enemyNum = 3;
+  }
+  console.log(enemyNum + "enemy");
+  fightingGoblin(enemyNum);
+
+}
+
+
+function fightingGoblin(number) {
+  monsterfightcards.style.display = 'flex';
+  let monstersFight = [];
+  let monsterHealthFight = [];
+  let monsterManaFight = []
+  let monsterStrFight = []
+  let monsterMgkFight = []
+  let monsterSpdFight = []
+  let monsterAgiFight = []
+  let monsterDefFight = []
+  let monsterResFight = []
+  let EnemyCardsTextAll = " ";
+  for(let i = 0; i < number; i++) {
+    let diceRoll = Math.floor(Math.random()*100);
+    if (diceRoll > 70) {
+      monstersFight.push(monsters[2].name);
+    } else {
+      monstersFight.push(monsters[1].name);
+    }
+  }
+    console.log(monstersFight);
+  for(let i = 0; i < monstersFight.length; i++) {
+    for (let j = 0; j < monsters.length; j++) {
+      if( monsters[j].name == monstersFight[i]){
+        
+        
+        monsterHealthFight.push(monsters[j].health);
+        monsterManaFight.push(monsters[j].mana);
+        monsterStrFight.push(monsters[j].str);
+        monsterMgkFight.push(monsters[j].mgk);
+        monsterSpdFight.push(monsters[j].spd);
+        monsterAgiFight.push(monsters[j].agi);
+        monsterDefFight.push(monsters[j].def);
+        monsterResFight.push(monsters[j].res);
+        
+        
+
+        const EnemyCardsText = `  
+        <div class="monsterContainer">
+        <div class="monsterImg">
+        <img src="${monsters[j].monsterImage}">
+        </div>
+        <div class="descriptEnemyFight">
+        <p> ${monsters[j].name} <p>
+        <p> Health: ${monsters[j].health} </p>
+        <p> Mana: ${monsters[j].mana} </p>
+        </div>
+        </div>
+        `;
+
+        console.log(monstersFight);
+        console.log(monsterHealthFight);
+        console.log(monsterManaFight);
+        console.log(monsterStrFight);
+        console.log(monsterMgkFight);
+        console.log(monsterSpdFight);
+        console.log(monsterAgiFight);
+        console.log(monsterDefFight);
+        console.log(monsterResFight);
+        
+        EnemyCardsTextAll += EnemyCardsText;
+      }
+      containersForTheeMonsters.innerHTML = `<div class="monsterContainerRow">${EnemyCardsTextAll}</div>`;
+      
+    }
+  
+
+  }
+  
+
+}
 /*
+monsterStats.style.display = "block";
+        monsterName.innerText = monstersFight[i].name;
+        monsterHealthText.innerText = monsterHealth;
+        <div>
+
+
 function skillRaffle() {
   if(playerbaseStat.str > 20) {
     
@@ -1003,6 +1193,84 @@ function skillRollRaffle(num) {
 }
 */
 
+
+
+function InitializeCharStatus() {
+  maxhealtH = Math.floor(playerbaseStat.hp + ((playerbaseStat.res *5 + playerbaseStat.def*5 / 2))); 
+  healtH = maxhealtH;
+  healthText.innerText = healtH;
+  maxManA = Math.floor(100 + (playerbaseStat.mgk * 5) + playerbaseStat.str);
+  manA =maxManA;
+  manaText.innerText = manA;
+  console.log(player1);
+}
+
+
+
+
+  class Character {
+    constructor(name, level = 0, health = 0, mana = 0, str = 0, mgk = 0, spd = 0 , agi = 0, def = 0 , res = 0) {
+      this.name = name;
+      this.level = level;
+      this.health = health;
+      this.mana = mana;
+      this.str = str;
+      this.mgk = mgk;
+      this.spd = spd;
+      this.agi = agi;
+      this.def = def;
+      this.res = res;
+    }
+  
+    attack(target) {
+      const damage = this.strength - target.resistance;
+      target.health -= damage > 0 ? damage : 0;
+      console.log(`${this.name} attacks ${target.name} for ${damage > 0 ? damage : 0} damage.`);
+    }
+  }
+  
+  const player1 = new Character(characterName, charLevel, healtH, manA, playerbaseStat.str, playerbaseStat.mgk, playerbaseStat.spd, playerbaseStat.agi, playerbaseStat.def, playerbaseStat.res );
+  
+  /*const player2 = new Character('Player 2', 100, 18, 12, 8);
+  
+  
+  const enemy1 = new Character('Enemy 1', 100, 19, 14, 9);
+  const enemy2 = new Character('Enemy 2', 100, 17, 13, 7);
+  
+  let isGameOver = false;
+  let turn = 1;
+  
+  while (!isGameOver) {
+    console.log(`Turn ${turn}`);
+  
+    player1.attack(enemy1);
+    player2.attack(enemy2);
+  
+    if (enemy1.health <= 0 && enemy2.health <= 0) {
+      console.log('Enemies have been defeated!');
+      isGameOver = true;
+      break;
+    }
+  
+    enemy1.attack(player1);
+    enemy2.attack(player2);
+  
+    if (player1.health <= 0 && player2.health <= 0) {
+      console.log('Players have been defeated!');
+      isGameOver = true;
+      break;
+    }
+  
+    turn++;
+
+  
+  } 
+}
+*/
+
+console.log(characterName);
+
+console.log(player1);
 
 
 
