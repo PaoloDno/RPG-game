@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="rpg.css">
-    <title>RPG - my dragon quest</title>
+    <title>RPG - my quest</title>
 </head>
 <body>
 
@@ -16,12 +16,13 @@
             > Inventory </button>
         </div>
         <div id="game-monitor">
-            
+    
             
         </div>
         <div id="stats">
             <span class="stat">XP: <strong><span id="xpText">0</span></strong></span>
             <span class="stat">Health: <strong><span id="healthText">100</span></strong></span>
+            <span class="stat">Mana: <strong><span id="manaText">100</span></strong></span>
             <span class="stat">Gold: <strong><span id="goldText">50</span></strong></span>
             <span class="stat">Status: <strong><span id="statusText"></span></strong></span>
         </div>
@@ -51,10 +52,7 @@
         </div>
         <div class="characterInfo">
             <div class="characterName">
-                <p>name : <strong><span id="nameText"></span></strong>
-                    <input type="text" id="nameInput" placeholder="Whats yo name?">
-                </p>
-                <button id="nameButton">Thats my name</button>
+                <p>name : <strong><span id="nameText"></span></strong></p>
                 <p>class :<strong><span id="classText"></span></strong> </p>
             </div>         
             <div class="characterattributes">
@@ -70,12 +68,32 @@
                 <div class="box"><p>SKILLS : <strong><span id="skillsSetsText"></span></strong></p></div>
                 <div class="box"><p>BLESSINGS : <strong><span id="blessingText"></span></strong></p></div>
             </div>
+            <div><p class="reminder">to close/open character panel click "character" button on top</p></div>
         </div>
+        </div>
+
+    </div>
+
+    <div class="modal" id="enterCharacterName">
+        <div class="modal-content1" id="chara">
+            <input type="text" id="nameInput" placeholder="Whats yo name?">
+            <button id="nameButton">Thats my name</button>
         </div>
     </div>
-   
-    
-  
+    <div class="modal2" id="monsterfightcards">
+        <div class="avatarFight">
+            <div id="characterFaceAvatar"></div>
+            <div>
+            <p>name : <strong><span id="nameTextAvatar"></span></strong></p>
+            <p><span class="statAvatar">Health: <strong><span id="healthTextAvatar">100</span></strong></span></p>
+            <p><span class="statAvatar">Mana: <strong><span id="manaTextAvatar">100</span></strong></span></p>
+            </div>
+        </div>
+        <div class="modal-content2" id="monstercards">
+            <div class="containersForTheeMonsters">
+            </div>
+        </div>        
+    </div> 
     <script src="rpg.js"></script>
 </body>
 </html>
