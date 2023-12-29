@@ -24,7 +24,9 @@ body {
   padding: 5px;
   color: #0a0a23;
   justify-content: space-evenly;
+  z-index: 95;
 }
+
 
 #monsterStats {
   display: none;
@@ -77,13 +79,13 @@ button {
   position: absolute;
   top: 60px;
   justify-content: center;
-  width: 400px;
+  width: 300px;
   height: 375px;
   background-color: rgba(124, 73, 6);
   border-radius: 50px;
   border: 2px solid #f1f1f1;
   grid-template-columns: 0.8fr 1fr;
-  overflow-y: hidden;
+  overflow: hidden;
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
@@ -112,6 +114,7 @@ button {
 #characterDisplay {
   margin: 0.5rem;
   height: 350px;
+  min-width: 120px;
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
@@ -127,7 +130,10 @@ button {
 
 .characterInfo {
   margin: 2px;
+  margin-top: 1rem;
   padding: 2px;
+  font-size: 0.75rem;
+  cursor: pointer;
   p {
 
     margin: 0;
@@ -143,8 +149,18 @@ button {
     padding: 5px;
     overflow-x: hidden;
     overflow-y: auto;
-    padding-left: 20px;   
+    padding-left: 20px;
+    transition: transform 1s ease-in-out;   
   }
+}
+
+div.box:hover,
+.characterName:hover,
+.characterattributes:hover {
+  transform: scale(1.1);
+}
+.reminder:hover{
+  opacity: 1;
 }
 ::-webkit-scrollbar {
   width: 5px;
@@ -166,16 +182,24 @@ button {
 }
 #nameButton, #nameInput {
   display: none;
+  margin: 1rem;
 }
-
+#nameText{
+  color: rgb(245, 217, 59);
+  font-size: 1.2rem;
+}
+.reminder {
+  opacity: 0.2;
+  transition: opacity 1.3s ease-out;
+}
 .blessingDisplay,
 #skillsSetsText {
   font-size: 0.8rem;
 }
-.common {
+.common:hover {
   color: green;
 }
-.intermediate {
+.intermediate:hover {
   color: blue;
 }
 
@@ -183,9 +207,135 @@ button {
 display: flex;
 justify-content: center;
 flex-direction: row;
+z-index: 99;
   button {
   border-radius: 5px 5px 0 0;
   margin: 3px;
   min-width: none;
   }
+}
+
+
+.modal {
+  display: none; /* Hidden by default */
+  position: absolute; /* Stay in place */
+  z-index: 10; /* Sit on top */
+  left: auto;
+  right: auto;
+  top: 0;
+  bottom: 0;;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgba(0,0,0,0.4); /* Black with opacity */
+  align-items: center;
+  justify-content: center;
+}
+
+/* Modal Content/Box */
+.modal-content1 {
+  display: flex;
+  flex-direction: column;
+  margin: 15%; /* 15% from the top and centered */
+  padding: 20px;
+  border: 1px solid #eee2e2;
+  width: 200px; /* Could be more or less, depending on screen size */
+  height: 300px;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background-color: #573502;
+  background: url("bgimages/modalbackground.png") #c5a97f;
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+#monsterfightcards {
+  display: none; /* Hidden by default */
+  position: absolute; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: auto;
+  right: auto;
+  top: 0;
+  bottom: 0;;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgba(0,0,0,0.4); /* Black with opacity */
+  align-items: center;
+  justify-content: center;
+}
+.modal-content2 {
+  display: flex;
+  position: relative;
+  top: -200px;
+  flex-direction: row;
+  margin: 15%; /* 15% from the top and centered */
+  margin-left: 10%;
+  padding: 20px;
+  border: 1px solid #f1e970;
+  width: 540px; /* Could be more or less, depending on screen size */
+  height: 300px;
+  align-items: center;
+  justify-content: space-evenly;
+  text-align: center;
+  background-color: rgba(223, 60, 60, 0.808);
+}
+.monsterContainer {
+  display: inline-block;
+  flex-direction: column;
+  width: 120px;
+  overflow: hidden;
+  background-color: white;
+  border-radius: 5px;
+  color: #0a0a23;
+  margin: 10px;
+  padding: 0;
+}
+.containersForTheeMonsters{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  background-color: rgba(190, 49, 49, 0.4);
+  width: 400px;
+  overflow: hidden;
+}
+.monsterContainerRow {
+  display: flex;
+  flex-direction: row;
+}
+.monsterImg,
+.descriptEnemyFight {
+  display: inline-block;
+  margin: 5px;
+  width: 100px;
+  height: 100px;
+  overflow: hidden;
+  object-fit: fill;
+}
+.avatarFight {
+  display: inline-block;
+  width: 140px;
+  height: 350px;
+  justify-content: center;
+  align-items: flex-start;
+  position: relative;
+  top: 50px;
+  left: 100px;
+  flex-direction: column;
+  z-index: 10;
+  color: rgb(255, 255, 255);
+  background-color: #693411 !important;
+}
+#characterFaceAvatar{
+  display: inline-block;
+  width: 100px;
+  height: 200px;
+}
+#statAvatar {
+  border: 1px solid #e6e6e6;
+  padding: 5px;
+  color: #6cce3f;
+  justify-content: space-evenly;
 }
