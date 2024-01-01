@@ -15,6 +15,7 @@ let skillCardsTEXT = "";
 let skillNumStart = 0;
 let characterName = "";
 let towndistance = 0;
+let heroesParty = [];
 let CharStatus = [
 { name: "poison", turn: 999  },
 { name: "stun", turn: 1 },
@@ -22,19 +23,29 @@ let CharStatus = [
 let raffleSkill = [];
 let CharacterSkillList = [];
 let CharacterBlessings = [];
-let characterClass;
+let characterClass = "";
 let hoverImage = "";
 let AvatarImage = "";
 
-
+//profilePanel
 const backgDescrip = document.querySelector("#descript");
 const avatarCard = document.querySelector("#characterDisplay");
 const namebutton = document.querySelector("#nameButton");
+const skillsSetText = document.querySelector("#skillsSetsText");
+const blessingDisplay = document.querySelector("#blessingDisplay");
+const blessingText = document.querySelector("#blessingText");
+//buttons
 const button1 = document.querySelector("#button1");
 const button2 = document.querySelector("#button2");
 const button3 = document.querySelector("#button3");
 const button4 = document.querySelector("#button4");
 const button5 = document.querySelector("#characterProfileIcon");
+const button9 = document.querySelector("#button9");
+const button10 = document.querySelector("#button10");
+const button11 = document.querySelector("#button11");
+const button12 = document.querySelector("#button12");
+
+//statusText
 const text = document.querySelector("#text");
 const manaText = document.querySelector("#manaText");
 const xpText = document.querySelector("#xpText");
@@ -45,10 +56,25 @@ const monsterName = document.querySelector("#monsterName");
 const monsterHealthText =document.querySelector("#monsterHealth");
 const monitor = document.querySelector("#game-monitor");
 const log = document.querySelector("#logs");
+//topbuttons
 const inGameIconsLeft = document.querySelector('.inGameIconsLeft');
+//modal1CharacterName
 const modal1 = document.querySelector("#enterCharacterName");
+
+
+
+
+//fight
+const fightGame = document.querySelector("#fightGame");
 const containersForTheeMonsters = document.querySelector(".containersForTheeMonsters");
-const monsterfightcards = document.querySelector("#monsterfightcards");
+let distancefromTown = 0;
+const characterFaceAvatar = document.querySelector("#characterFaceAvatar");
+const nameTextAvatar = document.querySelector("#nameTextAvatar");
+const healthTextAvatar = document.querySelector("#healthTextAvatar");
+const manaTextAvatar = document.querySelector("#manaTextAvatar");
+let fightAvatarImageGlobal = "";
+const FightText = document.querySelector("#FightText");
+
 /* attribute */
 let charName = document.querySelector('#nameInput');
 const nameText = document.querySelector("#nameText");
@@ -68,13 +94,27 @@ const addedDefText = document.querySelector("#inventoryStatDef");
 const addedResText = document.querySelector("#inventoryStatRes");
 const addedHpText = document.querySelector("#inventoryStatHp");
 
+const playerbaseStat = 
+  {
+    str: 10,
+    mgk: 10,
+    spd: 10,
+    agi: 10,
+    def: 10,
+    res: 10,
+    hp: 100
+  }
+
+
+let maxhealtH = Math.floor(playerbaseStat.hp + ((playerbaseStat.res *5 + playerbaseStat.def*5 / 2))); 
+let  maxManA = Math.floor(100 + (playerbaseStat.mgk * 5) + playerbaseStat.str);
+
+const playerskill = [];
+const playerBag = [];
 
 
 
-const skillsSetText = document.querySelector("#skillsSetsText");
-const blessingDisplay = document.querySelector("#blessingDisplay");
-const blessingText = document.querySelector("#blessingText");
-
+//futureshopITems
 const equipments = [
   { name: 'adventurer gear', hp: 50, spd: 10, cost:100},
   { name: 'shinobi gear', str: 10, spd: 10, def: 20, cost:100}
@@ -96,20 +136,7 @@ const weapons = [
     { name: 'holy enchanted stick', str: 60, agi: 20, cost:10 },
 
 ];
-const playerbaseStat = 
-  {
-    str: 10,
-    mgk: 10,
-    spd: 10,
-    agi: 10,
-    def: 10,
-    res: 10,
-    hp: 100
-  }
-let maxhealtH = Math.floor(playerbaseStat.hp + ((playerbaseStat.res *5 + playerbaseStat.def*5 / 2))); 
-let   maxManA = Math.floor(100 + (playerbaseStat.mgk * 5) + playerbaseStat.str);
-const playerskill = [];
-const playerBag = [];
+
 const monsters = [
   { //0
     name: "slime",
@@ -303,9 +330,28 @@ button1.onclick = tutorials;
 button2.onclick = tutorials;
 button3.onclick = tutorials;/*records;*/
 button4.onclick = phase1;/*Start;*/
-
 nameButton.onclick = declareCharName;
+button5.addEventListener('click', function() {
+  const expanded  = this.getAttribute('aria-expanded') === 'true' || false;
+  
+  if (expanded) {
+    this.setAttribute('aria-expanded', 'false');
+    backgDescrip.classList.add('animate-scale')
+    backgDescrip.style.display = 'none'; // Hide the div
+    backgDescrip.setAttribute('aria-hidden', 'true');
+    ; 
+  } else {
+    this.setAttribute('aria-expanded', 'true');
+    backgDescrip.classList.remove('animate-scale'); 
+    backgDescrip.style.display = 'grid'; // Show the div
+    backgDescrip.setAttribute('aria-hidden', 'false');
+  }
+});
 
+
+
+
+//updates
 function update(location) {
   console.log("hello");
   monsterStats.style.display = "none";
@@ -321,7 +367,7 @@ function update(location) {
   monitor.style.backgroundImage = `url(${location.bgimage})`;
   console.log(location.bgimage);
 }
-
+//functioning locations
 function goTown() {
   update(locations[0]);
 }
@@ -330,6 +376,17 @@ function goStore() {
   update(locations[1]);
 }
 
+function goDungeon() {
+  distancefromTown = 0;
+  update(locations[7]);
+}
+function goGoblin() {
+  console.log(characterName);
+  update(locations[8]);
+}
+
+
+//non-Functioninglocations
 function goGuild() {
   update(locations[1]);
 }
@@ -337,9 +394,6 @@ function goInn() {
   update(locations[1]);
 }
 
-function goCave() {
-  update(locations[2]);
-}
 
 function buyItem() {
   if (gold >= 10) {
@@ -481,13 +535,8 @@ function defeatMonster() {
   update(locations[4]);
 }
 
-function goGoblin() {
-  update(locations[8]);
-}
 
-function goDungeon() {
-  update(locations[7]);
-}
+
 
 function lose() {
   update(locations[5]);
@@ -521,6 +570,8 @@ function pickEight() {
   pick(8);
 }
 
+
+/*temporary function */
 function tutorials() {
   update(locations[2])
   text.innerText = "click buttons above so something might happen, goodluck!!";
@@ -558,14 +609,11 @@ function pick(guess) {
   }
 }
 
-    function changeBackgroundImage(bgimage) {
+function changeBackgroundImage(bgimage) {
       
       monitor.style.backgroundImage = `url('${bgimage}')`;
       console.log(bgimage);
-    }
-
-
-
+}
 
 function declareCharName() {
  
@@ -575,31 +623,13 @@ function declareCharName() {
   modal1.style.display = 'none';
   nameText.innerText = characterName;
   console.log(characterName);
-  console.log(characterName);
-
-  console.log(player1);
 
   log.innerText += "\nSTART YOUR JOURNEY TO KILL THE DRAGON!";
   log.innerText += "\n press charater button on top to hide character panel";
   InitializeCharStatus();
   update(locations[0]);
 }
-button5.addEventListener('click', function() {
-  const expanded  = this.getAttribute('aria-expanded') === 'true' || false;
-  
-  if (expanded) {
-    this.setAttribute('aria-expanded', 'false');
-    backgDescrip.classList.add('animate-scale')
-    backgDescrip.style.display = 'none'; // Hide the div
-    backgDescrip.setAttribute('aria-hidden', 'true');
-    ; 
-  } else {
-    this.setAttribute('aria-expanded', 'true');
-    backgDescrip.classList.remove('animate-scale'); 
-    backgDescrip.style.display = 'grid'; // Show the div
-    backgDescrip.setAttribute('aria-hidden', 'false');
-  }
-});
+
 
 
 function phase1() {
@@ -620,8 +650,10 @@ function phase1A() {
     hp: 150,
     classImage: "newimages/Shield.png",
     classHoverImage: "newimages/hoverShield.png",
-    BgCard: "newimages/descrip1.jpg"
+    BgCard: "newimages/descrip1.jpg",
+    classFightAvatar: "avatarChar/ShieldAvatar.png"
   }
+  characterClass = charClass.name;
   bgDescripAvatar(charClass.BgCard, charClass.classImage);
   characterClass = charClass.name;
   playerbaseStat.str += charClass.str;
@@ -635,7 +667,8 @@ function phase1A() {
   log.innerText += "You are the ShieldHero, a male edgy MC you have no bitches\n that turned furry";
   AvatarImage = charClass.classImage;
   hoverImage = charClass.classHoverImage;
-
+  fightAvatarImageGlobal = charClass.classFightAvatar;
+  console.log(fightAvatarImageGlobal);
   updateAttributes();
     setTimeout(function() {
       backgDescrip.style.display = 'grid';
@@ -657,8 +690,11 @@ function phase1B() {
     hp: 110,
     classImage: "newimages/Ninja.png",
     classHoverImage: "newimages/hoverNinja.png",
-    classBgCard: "newimages/descrip2.jpg"
+    classBgCard: "newimages/descrip2.jpg",
+    classFightAvatar: "avatarChar/NinjaAvatar.png"
   }
+  
+  characterClass = charClass.name;
   bgDescripAvatar(charClass.classBgCard, charClass.classImage);
   characterClass = charClass.name;
   playerbaseStat.str += charClass.str;
@@ -672,7 +708,7 @@ function phase1B() {
   log.innerText += "Big booby ninja, high speed and killer dmg";
   AvatarImage = charClass.classImage;
   hoverImage = charClass.classHoverImage;
-  
+  fightAvatarImageGlobal = charClass.classFightAvatar;
 
   updateAttributes();
   setTimeout(function() {
@@ -695,8 +731,11 @@ function phase1C() {
     hp: 110,
     classImage: "newimages/Wizard.png",
     classHoverImage: "newimages/hoverWizard.png",
-    classBgCard: "newimages/descrip3.jpg"
+    classBgCard: "newimages/descrip3.jpg",
+    classFightAvatar: "avatarChar/WizardAvatar.png"
   }
+  
+  characterClass = charClass.name;
   bgDescripAvatar(charClass.classBgCard, charClass.classImage);
   characterClass = charClass.name;
   playerbaseStat.str += charClass.str;
@@ -710,6 +749,7 @@ function phase1C() {
   log.innerText += "small boing boing, EXPLOSIOON";
   AvatarImage = charClass.classImage;
   hoverImage = charClass.classHoverImage;
+  fightAvatarImageGlobal = charClass.classFightAvatar;
   updateAttributes();
   setTimeout(function() {
     backgDescrip.style.display = 'grid';
@@ -731,8 +771,12 @@ function phase1D() {
     hp: 120,
     classImage: "newimages/Priest.png",
     classHoverImage: "newimages/hoverPriest.png",
-    classBgCard: "newimages/descrip4.jpg" 
+    classBgCard: "newimages/descrip4.jpg",
+    classFightAvatar: "avatarChar/PriestAvatar.png"
+
   }
+  
+  characterClass = charClass.name;
   bgDescripAvatar(charClass.classBgCard, charClass.classImage);
   characterClass = charClass.name;
   playerbaseStat.str += charClass.str;
@@ -747,6 +791,7 @@ function phase1D() {
   log.innerText += " You have become a Priest\nNobody dying in this party. We do it with style by dying slowly with cigarrette and alcohol";
   AvatarImage = charClass.classImage;
   hoverImage = charClass.classHoverImage;
+  fightAvatarImageGlobal = charClass.classFightAvatar;
 
   updateAttributes();
   setTimeout(function() {
@@ -910,61 +955,50 @@ function bgDescripAvatar(bgCardImage, Avatar) {
 }
 
 
-class Skill {
-
-
-  constructor(name, type, rarity, target, baseDamage = 0, additionalDamage, baseHeal = 0, additionalHeal, special, manaCost = 0, cost = 0) {
-    this.name = name;
-    this.type = type;
-    this.rarity = rarity;
-    this.target = target;
-    this.baseDamage = baseDamage;
-    this.additionalDamage = additionalDamage;
-    this.baseHeal = baseHeal;
-    this.additionalHeal = additionalHeal;
-    this.special = special;
-    this.cost = cost;
-    this.manaCost = manaCost;
-  }
-
-  
-}
 
 // Skills available in the market
-const skillDex = {
-  normalatk: new Skill("Normal Atk", "damage", "common", "enemy", 0, "atk + mgk", 0, 0, "none", 0, 50),
+const skillDex = [
+  //0
+  {name: "normal atk", type: "damage", rarity: "common", target: "enemy", baseDamage: 0, additionalDamage: "str + mgk", baseHeal: 0, additionalHeal: 0, special: "none", manaCost: 0, cost: 50},
+  {name: "manaball", type: "damage", rarity: "common", target: "enemy", baseDamage: 20, additionalDamage: "mgk * 1.5", baseHeal: 0, additionalHeal: 0, special: "none", manaCost: 20, cost: 50},
+  {name: "manablasth", type: "damage", rarity: "common", target: "enemy", baseDamage: 20, additionalDamage: "mgk * 2.2", baseHeal: 0, additionalHeal: 0, special: "none", manaCost: 20, cost: 50},
+  {name: "manabarrier", type: "shield", rarity: "common", target: "ally", baseDamage: 0, additionalDamage: 0, baseHeal: 0, additionalHeal: 0, special: "shield += 4 * (res * mgk);", manaCost: 20, cost: 50},
+  //4
+  {name: "shieldbash", type: "damage", rarity: "common", target:"enemy", baseDamage: 0, additionalDamage: 0, baseHeal: 20, additionalHeal: "def + res", special: "none", manaCost: 0, cost: 50},
+  //5
+  {name: "bullcharghe", type: "damage", rarity: "common", target:"enemy", baseDamage: 0, additionalDamage: 0, baseHeal: 20, additionalHeal: "(def + res)* 1.2", special: "none", manaCost: 0, cost: 50},
 
-  manaball: new Skill("Manaball", "damage", "common", "enemy", 20, "mgk * 1.5", 0, 0, "none", 20, 50),
-  manablast: new Skill("Manablast", "damage", "common", "enemy", 20, "mgk * 2.2", 0, 0, "none", 20, 50),
-  manabarrier: new Skill("Manabarrier", "shield", "common", "ally", 0, 0, 0, 0, "shield = 2 * (res * mgk);", 20, 50),
-  
-  shieldbash: new Skill("Shieldbash", "damage", "common", "enemy", 0, 0, 20, "def + res", "none", 0, 50),
-  bullcharge: new Skill("Bullcharge", "damage", "common", "enemy", 0, 0, 20, "(def + res)* 1.2", "none", 0, 50),
+  {name: "slash", type: "damage", rarity: "common", target: "enemy", baseDamage: 10, additionalDamage: "str * 1.2", baseHeal: 0, additionalHeal: 0, special: "none", manaCost: 0,  cost: 50},
+  {name: "heavyslash", type: "damage", rarity: "common", target: "enemy", baseDamage: 10, additionalDamage: "str * 2", baseHeal: 0, additionalHeal: 0, special: "none", manaCost: 0, cost: 50},
 
-  slash: new Skill("Slash", "damage", "common", "enemy", 10, "str*1.2", 0, 0, "none", 0, 50),
-  heavyslash: new Skill("Heavyslash", "damage", "common", "enemy", 10, "str * 2", 0, 0, "none", 0, 50),
+  {name: "heal", type: "heal", rarity: "common", target: "ally", baseDamage: 0, additionalDamage: 0, baseHeal: 20, additionalHeal: "mgk * 2", special: "none", manaCost: 20, cost: 50},
+  {name: "hugeheal", type: "heal", rarity: "common", target: "ally", baseDamage: 0, additionalDamage: 0, baseHeal: 20, additionalHeal: "mgk * 2", special: "none", manaCost: 20, cost: 50},
+  //10
+  {name: "lizardskin",type: "buff", rarity: "common",target: "ally", baseDamage: 0, additionalDamage: 0, baseHeal: 20, additionalHeal:  0, special: "res += res + (mgk * 1.2); turn = 2;", manaCost: 20, cost: 50},
+  {name: "windaura",type: "buff", rarity: "common",target: "ally", baseDamage: 0, additionalDamage: 0, baseHeal: 20, additionalHeal:  0, special: "spd += 30; turn = 3;", manaCost: 20, cost: 50},
 
-  heal: new Skill("Heal", "heal", "common", "ally", 0, 0, 20, "mgk * 2", "none", 20, 50),
-  hugeheal: new Skill("Hugeheal", "heal", "common", "ally", 0, 0, 20, "mgk * 2", "none", 20, 50),
+  //12
+  {name: "Wrath", type: "damage", rarity: "unique", target: "ally", baseDamage: playerbaseStat.def, additionalDamage: "(str*2) + res + def", baseHeal: 0, additionalHeal:  0, special: "health -= (res + def) / 2", manaCost: 20, cost: 50},
+  {name: "Swallow Reversal",type: "damage", rarity: "unique",target: "ally", baseDamage: playerbaseStat.spd, additionalDamage: "(spd + agi) * 1.5", baseHeal: 20, additionalHeal:  0, special: "spd += 10; turn = 3;", manaCost: 20, cost: 50},
+  {name: "Explosion",type: "damage", rarity: "unique",target: "ally", baseDamage: playerbaseStat.mgk, additionalDamage: "manA * 2", baseHeal: 20, additionalHeal:  0, special: "manA = 0", manaCost: 20, cost: 50},
+  {name: "purification",type: "damage", rarity: "unique",target: "ally", baseDamage: playerbaseStat.res, additionalDamage: 0, baseHeal: 20, additionalHeal:  0, special: "spd += 30; turn = 3;", manaCost: 20, cost: 50}
 
-  lizardskin: new Skill("Lizardskin", "buff", "common", "ally", 0, 0, 20,  0, "res += res + (mgk * 1.2); turn = 2;", 20, 50),
-  windaura: new Skill("Windaura", "buff", "common", "ally", 0, 0, 20,  0, "spd += 30; turn = 3;", 20, 50),
-}
-
-
-/*
-console.log(skillDex["shieldbash"].type);
-locations.forEach((item , index) => {
-  console.log(index+ skillDexLibrary[index]);
-});
-console.log(skillDex["bullcharge"]); */
+]
 
 function phase3I() {
-  let skillDexLibrary = [ "normalatk", "manaball", "manablast", "manabarrier", "shieldbash", "bullcharge", "slash", "heavyslash", "heal", "hugeheal", "lizardskin", "windaura"];
-
+  let skillDexLibrary = [ "normal atk", "manaball", "manablast", "manabarrier", "shieldbash", "bullcharge", "slash", "heavyslash", "heal", "hugeheal", "lizardskin", "windaura"];
+  let uniqueSkill = ["Wrath", "Swallow Reversal", "Explosion", "purification"];
   let diceRoll3 = Math.round(Math.random()*100);
   console.log(diceRoll3);
-  
+  if (characterClass == "ShieldHero") {
+    CharSkills.push(uniqueSkill[0]);
+  } else if (characterClass == "ShinobiWoman") {
+    CharSkills.push(uniqueSkill[1]);
+  } else if (characterClass == "MagicalWoman") {
+    CharSkills.push(uniqueSkill[2]);
+  } else if (characterClass == "CorruptPriest") {
+    CharSkills.push(uniqueSkill[3]);
+  } 
 
   if (diceRoll3 >= 91 ){ 
     skillNumStart = 5;
@@ -979,23 +1013,23 @@ function phase3I() {
   skillBunos.push(skillDexLibrary[0]);
 
   for (let i = 0 ; i < skillDexLibrary.length; i++){
-  if (playerbaseStat.str > 15 && i >= 6 & i <= 7) {
+  if (playerbaseStat.str > 15 && i >= 6 && i <= 7) {
     skillBunos.push(skillDexLibrary[i]);
   }
-  if ((playerbaseStat.def >= 15 || playerbaseStat.res >= 15) && i >= 3 & i <= 5) {
+  if ((playerbaseStat.def >= 15 || playerbaseStat.res >= 15) && i >= 3 && i <= 5) {
     skillBunos.push(skillDexLibrary[i]);
   }
-  if (playerbaseStat.mgk > 15 && i >= 2 & i <= 3) {
+  if (playerbaseStat.mgk > 15 && i >= 2 && i <= 3) {
     skillBunos.push(skillDexLibrary[i]);
   }
-  if (playerbaseStat.hp > 150 && i >= 9 & i <= 12) {
+  if (playerbaseStat.hp > 150 && i >= 9 && i <= 12) {
     skillBunos.push(skillDexLibrary[i]);
   }
  
 }
   
   
-  for (let i = 0; i < skillNumStart; i++) {
+for (let i = 0; i < skillNumStart; i++) {
     
     let skillBunosIndex = Math.floor(Math.random() * skillBunos.length);
     if (CharSkills.includes(skillBunos[skillBunosIndex])) {
@@ -1017,14 +1051,17 @@ function phase3I() {
         console.log("hp and agi");
       }
       updateAttributes();
-      console.log(`${skillBunos[skillBunosIndex]} is in the skillList already!`);
+      console.log(`${skillBunos[skillBunosIndex].name} is in the skillList already!`);
     } else {
       CharSkills.push(skillBunos[skillBunosIndex]);
-    let skillCardsTT = `<span class="skillDisplay ${skillDex[skillBunos[skillBunosIndex]].rarity}"> [${skillBunos[skillBunosIndex]}] </span>`;
+    let skillCardsTT = `<span class="skillDisplay ${skillDex[skillBunosIndex].rarity}"> [${skillDex[skillBunosIndex].name}] </span>`;
     skillCardsTEXT += skillCardsTT;
-    log.innerText += "\n You recieved the skill named " + skillBunos[skillBunosIndex] + "\n with a [" + skillDex[skillBunos[skillBunosIndex]].rarity + "] rarity.\n";
+    log.innerText += "\n You recieved the skill named " + skillDex[skillBunosIndex].name + "\n with a [" + skillDex[skillBunosIndex].rarity + "] rarity.\n";
     }
+   
   }
+  let skillCardsTEXTUNique = `<span class="skillDisplay unique"> [ ${CharSkills[1]} ] </span>`;
+  skillCardsTEXT += skillCardsTEXTUNique;
   console.log(skillCardsTEXT);
   console.log(CharSkills);
   skillsSetText.innerHTML = skillCardsTEXT;
@@ -1049,7 +1086,7 @@ function caveEvent() {
   if (diceRoll6 > 90) {
     treasureRoom();
   }
-  if (diceRoll6 > 80 && diceRoll6 < 89) {
+  if (diceRoll6 > 70 && diceRoll6 < 89) {
     campRoom();
   } else {
     goblinFight();
@@ -1063,14 +1100,19 @@ function treasureRoom() {
   goGoblin();
 }
 function campRoom() {
-  healtH += 100;
-  manA += 150;
-  if (healtH > maxhealtH) {
-    health = maxhealtH
+  healtH += 30;
+  manA += 50;
+  maxhealtH = Math.floor(playerbaseStat.hp + ((playerbaseStat.res * 5 + playerbaseStat.def*5 ) / 2));
+  maxManA = Math.floor(100 + (playerbaseStat.mgk * 5) + playerbaseStat.str);
+  if (healtH >= maxhealtH) {
+    health = maxhealtH;
   }
-  if (manA > maxManA) {
+  if (manA >= maxManA) {
     manA = maxManA;
   }
+  
+  healthText.innerText = healtH;
+  manaText.innerText = manA;
   console.log("refreshing");
   goGoblin();
 }
@@ -1078,31 +1120,50 @@ function campRoom() {
 function goblinFight() {
   let diceRoll6 = Math.floor(Math.random()*100);
   let enemyNum = 0;
-  if (diceRoll6 > 80) {
-    enemyNum = 3;
-  }
-  if (diceRoll6 > 50 && diceRoll6 < 79) {
+  diceRoll6 += distancefromTown;
+  if (diceRoll6 < 40) {
+    enemyNum = 1;
+  } else if (diceRoll6 < 70 && diceRoll6 > 41) {
     enemyNum = 2;
   } else {
     enemyNum = 3;
   }
   console.log(enemyNum + "enemy");
   fightingGoblin(enemyNum);
-
+  
 }
 
 
 function fightingGoblin(number) {
-  monsterfightcards.style.display = 'flex';
+  fightGame.style.display = 'flex';
   let monstersFight = [];
+  let monsterImageinFight = [];
   let monsterHealthFight = [];
-  let monsterManaFight = []
-  let monsterStrFight = []
-  let monsterMgkFight = []
-  let monsterSpdFight = []
-  let monsterAgiFight = []
-  let monsterDefFight = []
-  let monsterResFight = []
+  let monsterManaFight = [];
+  let monsterStrFight = [];
+  let monsterMgkFight = [];
+  let monsterSpdFight = [];
+  let monsterAgiFight = [];
+  let monsterDefFight = [];
+  let monsterResFight = [];
+  let EveryoneOnFightSpeed = [];
+  let indexSpeed = [];
+  let SpeedSum = 0;
+  let turnFight = [];
+  
+  monsterHealthFight.push(healtH);
+  monsterManaFight.push(manA);
+  monsterStrFight.push(playerbaseStat.str);
+  monsterMgkFight.push(playerbaseStat.mgk);
+  monsterSpdFight.push(playerbaseStat.spd);
+  monsterAgiFight.push(playerbaseStat.agi);
+  monsterDefFight.push(playerbaseStat.def);
+  monsterResFight.push(playerbaseStat.res);
+
+  /*i tried using constructor but im too beginner and makes me work slower
+  since i have to apply immediately what im rying to learn
+  */
+  initializeGoFight();
   let EnemyCardsTextAll = " ";
   for(let i = 0; i < number; i++) {
     let diceRoll = Math.floor(Math.random()*100);
@@ -1112,12 +1173,13 @@ function fightingGoblin(number) {
       monstersFight.push(monsters[1].name);
     }
   }
+ 
     console.log(monstersFight);
   for(let i = 0; i < monstersFight.length; i++) {
     for (let j = 0; j < monsters.length; j++) {
       if( monsters[j].name == monstersFight[i]){
         
-        
+        monsterImageinFight.push(monsters[j].monsterImage);
         monsterHealthFight.push(monsters[j].health);
         monsterManaFight.push(monsters[j].mana);
         monsterStrFight.push(monsters[j].str);
@@ -1155,14 +1217,185 @@ function fightingGoblin(number) {
         EnemyCardsTextAll += EnemyCardsText;
       }
       containersForTheeMonsters.innerHTML = `<div class="monsterContainerRow">${EnemyCardsTextAll}</div>`;
-      
     }
-  
-
   }
   
+  EveryoneOnFightSpeed.push(playerbaseStat.spd);
+  for (let k = 1; k < monsterSpdFight.length; k++) {
+    EveryoneOnFightSpeed.push(monsterSpdFight[k]);
+    SpeedSum += monsterSpdFight[k];
+    
+    console.log("SpeedSum"+ SpeedSum);
+  }
+  SpeedSum += playerbaseStat.spd;
+  for(let m = 0; m < EveryoneOnFightSpeed.length; m++){
+  let speedCalcOnFight = Math.floor((SpeedSum / (Number(EveryoneOnFightSpeed[m]))));
+  console.log(speedCalcOnFight + "spdcaclonFight");
+  
+  indexSpeed.push(Number(speedCalcOnFight));
+  
+  
+  }
+  console.log("indexSpeed");
+  console.log(EveryoneOnFightSpeed);
+  console.log(indexSpeed);
+  let turn = 0;
+  for (let l = 0; l < SpeedSum; l++) {
+    turn++;
+    turnFight.push(turn);
+    
+  }
+  for (let s = 0 ; s < turnFight.length ; s++) {
+    if ((turnFight[s] % indexSpeed[0]) == 0) {
+        //YourTurn();
+        FightText.innerText = "Your Turn";
+        setTimeout(InitializeMyTurn, 1500);
+        console.log(monsterHealthFight);
+        setTimeout(function() {
+        button9.classList.add('inactivebutton');
+        button10.classList.add('inactivebutton');
+        button11.classList.add('inactivebutton');
+        button12.classList.add('inactivebutton');
+        button9.onclick = tutorials;
+        button10.onclick = tutorials3;
+        button11.onclick = tutorials3;
+        button12.onclick = tutorials3;
+        }, 1200);
+    }
+    for(let h = 1; h < indexSpeed.length; h++){
+      if((turnFight[s] % indexSpeed[h]) == 0){
+        //EnemyTurn();
+        console.log("goblin");
+      }
+
+    }
+    setTimeout(InitializeMyTurn, 2000);
+    
+  }
+
+
+function normalAtk() {
+  button9.onclick = tutorials3;
+  button10.onclick = tutorials3;
+  button11.onclick = tutorials3;
+  button12.onclick = tutorials3;
+  setTimeout(function() {
+    if(monstersFight.length == 1 ){
+      button9.innerText = `${monstersFight[0]}`;
+      button9.onclick = normalAtking(1);
+      button10.innerText = " --- ";
+      button11.innerText = " --- ";
+      button10.onclick = tutorials3;
+      button11.onclick = tutorials3;
+      
+    }
+    else if (monstersFight.length == 2 ){
+      button9.onclick = normalAtking(1);
+      button10.onclick = normalAtking(2);
+      button9.innerText = `${monstersFight[0]}`;
+      button10.innerText = `${monstersFight[1]}`;
+      button11.innerText = " --- ";
+      button11.onclick = tutorials3;
+    }
+    else if(monstersFight.length == 3 ){
+      button9.onclick = normalAtking(1);
+      button10.onclick = normalAtking(2);
+      button11.onclick = normalAtking(3);
+      button9.innerText = `${monstersFight[0]}`;
+      button10.innerText = `${monstersFight[1]}`;
+      button11.innerText = `${monstersFight[2]}`;
+    }
+    button12.onclick = InitializeMyTurn;
+    button12.innerText = "go back";
+  
+  
+}, 500);
 
 }
+
+function normalAtking(num) {
+  let FightingIndex = num;
+  let str = monsterStrFight[0];
+  let mgk = monsterMgkFight[0];
+  monsterHealthFight[FightingIndex] -= skillDex[0].baseDamage + eval(skillDex[0].additionalDamage);
+  console.log(eval(skillDex[0].additionalDamage));
+  console.log(str);
+  console.log(mgk);
+
+  monsterManaFight[0] -= skillDex[0].manaCost;
+  updateMonsterHealth();
+
+}
+
+  function updateMonsterHealth() {
+    containersForTheeMonsters.innerHTML = "";
+    let EnemyCardsText = "";
+    EnemyCardsTextAll = "";
+
+    for(let i = 0; i < monstersFight.length; i++) {
+      for (let j = 0; j < monsters.length; j++) {
+          
+          let k = i + 1;
+          EnemyCardsText = `  
+          <div class="monsterContainer">
+          <div class="monsterImg">
+          <img src="${monsterImageinFight[i]}" alt="monster">
+          </div>
+          <div class="descriptEnemyFight">
+          <p> ${monstersFight[i]} <p>
+          <p> Health: ${monsterHealthFight[k]} </p>
+          <p> Mana: ${monsterManaFight[k]} </p>
+          </div>
+          </div>
+          `;
+  
+          console.log(monstersFight);
+          console.log(monsterHealthFight);
+          console.log(monsterManaFight);
+          console.log(monsterStrFight);
+          console.log(monsterMgkFight);
+          console.log(monsterSpdFight);
+          console.log(monsterAgiFight);
+          console.log(monsterDefFight);
+          console.log(monsterResFight);
+          
+          EnemyCardsTextAll += EnemyCardsText;
+        }
+        containersForTheeMonsters.innerHTML = `<div class="monsterContainerRow">${EnemyCardsTextAll}</div>`;
+      }
+     
+    
+    console.log("endTurn");
+    return;
+  }
+  
+function InitializeMyTurn(){
+    button9.classList.remove('inactivebutton');
+    button10.classList.remove('inactivebutton');
+    button11.classList.remove('inactivebutton');
+    button12.classList.remove('inactivebutton');
+    button9.onclick = normalAtk;
+    button10.onclick = tutorials3;
+    button11.onclick = tutorials3;
+    button12.onclick = tutorials3;
+    button9.innerText = "Fight";
+    button10.innerText = "wait";
+    button11.innerText = "wait";
+    button12.innerText = "wait";
+  }
+
+  
+
+
+
+  button9.onclick = tutorials3;
+  button10.onclick = tutorials3;
+  button11.onclick = tutorials3;
+  button12.onclick = tutorials3;
+
+}
+
+
 /*
 monsterStats.style.display = "block";
         monsterName.innerText = monstersFight[i].name;
@@ -1193,6 +1426,16 @@ function skillRollRaffle(num) {
 }
 */
 
+function initializeGoFight() {
+characterFaceAvatar.style.backgroundImage = `url('${fightAvatarImageGlobal}')`;
+nameTextAvatar.innerText = characterName;
+healthTextAvatar.innerText = healtH;
+manaTextAvatar.innerText = manA;
+console.log(fightAvatarImageGlobal);
+}
+
+
+
 
 
 function InitializeCharStatus() {
@@ -1200,13 +1443,12 @@ function InitializeCharStatus() {
   healtH = maxhealtH;
   healthText.innerText = healtH;
   maxManA = Math.floor(100 + (playerbaseStat.mgk * 5) + playerbaseStat.str);
-  manA =maxManA;
+  manA = maxManA;
   manaText.innerText = manA;
-  console.log(player1);
 }
 
 
-
+/*
 
   class Character {
     constructor(name, level = 0, health = 0, mana = 0, str = 0, mgk = 0, spd = 0 , agi = 0, def = 0 , res = 0) {
@@ -1230,7 +1472,7 @@ function InitializeCharStatus() {
   }
   
   const player1 = new Character(characterName, charLevel, healtH, manA, playerbaseStat.str, playerbaseStat.mgk, playerbaseStat.spd, playerbaseStat.agi, playerbaseStat.def, playerbaseStat.res );
-  
+  */
   /*const player2 = new Character('Player 2', 100, 18, 12, 8);
   
   
@@ -1267,11 +1509,13 @@ function InitializeCharStatus() {
   } 
 }
 */
-
+function tutorials3(){
+  FightText.innerText = "Wait...";
+}
 console.log(characterName);
-
+/*
 console.log(player1);
-
+*/
 
 
 
@@ -1291,8 +1535,7 @@ avatarCard.addEventListener('mouseover', () => {
     avatarCard.style.backgroundImage = `url('${hoverImage}')`;
     avatarCard.style.transform = 'scaleY(1.15)';
    
-    console.log(hoverImage);
-    console.log(skillDex["manaball"].cost);   
+    console.log(hoverImage); 
 }, 500);
   
 });
@@ -1304,3 +1547,8 @@ avatarCard.addEventListener('mouseout', () => {
   console.log(AvatarImage);
 }, 200);
 });
+
+
+
+InitializeCharStatus();
+initializeGoFight();
