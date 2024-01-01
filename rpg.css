@@ -202,6 +202,9 @@ div.box:hover,
 .intermediate:hover {
   color: blue;
 }
+.unique:hover {
+  color: goldenrod;
+}
 
 .inGameIconsLeft {
 display: flex;
@@ -251,9 +254,10 @@ z-index: 99;
   background-repeat: no-repeat;
 }
 
-#monsterfightcards {
+#fightGame {
   display: none; /* Hidden by default */
-  position: absolute; /* Stay in place */
+  flex-direction: column;
+  position: absolute;/* Stay in place */
   z-index: 1; /* Sit on top */
   left: auto;
   right: auto;
@@ -261,22 +265,37 @@ z-index: 99;
   bottom: 0;;
   width: 100%; /* Full width */
   height: 100%; /* Full height */
-  overflow: auto; /* Enable scroll if needed */
+  overflow: hidden; /* Enable scroll if needed */
   background-color: rgba(0,0,0,0.4); /* Black with opacity */
   align-items: center;
   justify-content: center;
 }
 .modal-content2 {
   display: flex;
-  position: relative;
-  top: -200px;
+  flex-direction: column;
+  width: 520px;
+  height: 800px;
+  background-color: #555;
+  padding: 1rem;
+}
+#fightParty {
+display: flex;
+flex-direction: column;
+max-width: 600px;
+max-height: 900px;
+background-color: #ffffff;
+color: #ffffff;
+margin: 30px auto 0px;
+padding: 10px;
+background-color: #c5a97f;
+}
+#monstercards {
+  display: flex;
   flex-direction: row;
-  margin: 15%; /* 15% from the top and centered */
-  margin-left: 10%;
   padding: 20px;
   border: 1px solid #f1e970;
-  width: 540px; /* Could be more or less, depending on screen size */
-  height: 300px;
+  width: 100%; /* Could be more or less, depending on screen size */
+  height: 160px;
   align-items: center;
   justify-content: space-evenly;
   text-align: center;
@@ -285,7 +304,7 @@ z-index: 99;
 .monsterContainer {
   display: inline-block;
   flex-direction: column;
-  width: 120px;
+  width: 110px;
   overflow: hidden;
   background-color: white;
   border-radius: 5px;
@@ -293,17 +312,26 @@ z-index: 99;
   margin: 10px;
   padding: 0;
 }
+#monstercards {
+background-color: #c5a97f;
+height: auto;
+overflow: hidden;
+width: 100%;
+}
 .containersForTheeMonsters{
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
   background-color: rgba(190, 49, 49, 0.4);
-  width: 400px;
+  width: 100%;
   overflow: hidden;
+  justify-content: center;
+  align-items: center;
 }
 .monsterContainerRow {
   display: flex;
   flex-direction: row;
+  margin: 0.5rem;
 }
 .monsterImg,
 .descriptEnemyFight {
@@ -317,10 +345,10 @@ z-index: 99;
 .avatarFight {
   display: inline-block;
   width: 140px;
-  height: 350px;
+  height: 250px;
   justify-content: center;
-  align-items: flex-start;
-  position: relative;
+  align-items: center;
+  
   top: 50px;
   left: 100px;
   flex-direction: column;
@@ -329,13 +357,39 @@ z-index: 99;
   background-color: #693411 !important;
 }
 #characterFaceAvatar{
-  display: inline-block;
-  width: 100px;
-  height: 200px;
+  display: flex;
+  width: 120px;
+  height: 120px;
+  background-position: center;
+  background-size: contain;
+  margin-left: auto;
+  margin-right: auto;
+  z-index: 99;
 }
 #statAvatar {
   border: 1px solid #e6e6e6;
   padding: 5px;
   color: #6cce3f;
   justify-content: space-evenly;
+}
+#controlsFight {
+  width: 80%;
+  height: 40px;
+  justify-content: space-evenly;
+  align-items: center;
+  margin-top: 5px;
+  background-color: #e6e6e6;
+}
+#FightText {
+  width: 100%;
+  margin-top: 5px;
+  background-color: #eee2e2;
+  border: 2px solid #0a0a23;
+  height: 60px;
+  justify-content: space-evenly;
+  align-items: center;
+  margin-top: 5px;
+}
+.inactivebutton {
+  opacity: 0.4;
 }
