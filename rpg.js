@@ -1160,6 +1160,12 @@ function fightingGoblin(number) {
   monsterDefFight.push(playerbaseStat.def);
   monsterResFight.push(playerbaseStat.res);
 
+  //initiaizebutton2
+  button9.onclick = tutorials3;
+  button10.onclick = tutorials3;
+  button11.onclick = tutorials3;
+  button12.onclick = tutorials3;
+
   /*i tried using constructor but im too beginner and makes me work slower
   since i have to apply immediately what im rying to learn
   */
@@ -1221,13 +1227,13 @@ function fightingGoblin(number) {
   }
   
   EveryoneOnFightSpeed.push(playerbaseStat.spd);
+  SpeedSum = playerbaseStat.spd;
   for (let k = 1; k < monsterSpdFight.length; k++) {
     EveryoneOnFightSpeed.push(monsterSpdFight[k]);
     SpeedSum += monsterSpdFight[k];
     
     console.log("SpeedSum"+ SpeedSum);
   }
-  SpeedSum += playerbaseStat.spd;
   for(let m = 0; m < EveryoneOnFightSpeed.length; m++){
   let speedCalcOnFight = Math.floor((SpeedSum / (Number(EveryoneOnFightSpeed[m]))));
   console.log(speedCalcOnFight + "spdcaclonFight");
@@ -1241,17 +1247,30 @@ function fightingGoblin(number) {
   console.log(indexSpeed);
   let turn = 0;
   for (let l = 0; l < SpeedSum; l++) {
-    turn++;
-    turnFight.push(turn);
     
+    turnFight.push(turn);
+    turn++;
   }
+  let WhosTurnIsit = [];
   for (let s = 0 ; s < turnFight.length ; s++) {
+    for(let h = 0; h < indexSpeed.length; h++){
+      
+      if ((turnFight[s] % indexSpeed[0]) == 0) {
+        WhosTurnIsit.push(characterName);
+      }  if((turnFight[s] % indexSpeed[h]) == 0){
+        WhosTurnIsit.push(monstersFight[h]);
+      }
+      
+      
+      
+      /*
     if ((turnFight[s] % indexSpeed[0]) == 0) {
-        //YourTurn();
+        
+        
         FightText.innerText = "Your Turn";
-        setTimeout(InitializeMyTurn, 1500);
+       
         console.log(monsterHealthFight);
-        setTimeout(function() {
+       
         button9.classList.add('inactivebutton');
         button10.classList.add('inactivebutton');
         button11.classList.add('inactivebutton');
@@ -1260,71 +1279,112 @@ function fightingGoblin(number) {
         button10.onclick = tutorials3;
         button11.onclick = tutorials3;
         button12.onclick = tutorials3;
-        }, 1200);
+        
     }
-    for(let h = 1; h < indexSpeed.length; h++){
-      if((turnFight[s] % indexSpeed[h]) == 0){
+    if((turnFight[s] % indexSpeed[1]) == 0){
+       
+       
         //EnemyTurn();
-        console.log("goblin");
-      }
+        
+        let N = h - 1; 
+        goblinsTurn(N);
+        initializeGoFightInFight();
+      } */
 
     }
-    setTimeout(InitializeMyTurn, 2000);
+    
+
+
     
   }
 
+  let WhosTurnIsitControl = 0;
+  for (let i = 0; i < WhosTurnIsit.length; i++) {
+    
+    if(WhosTurnIsit[i] == characterName) {
+      FightText.innerText = "Your Turn";
+       
+      console.log(monsterHealthFight);
+     
+      button9.classList.remove('inactivebutton');
+      button10.classList.remove('inactivebutton');
+      button11.classList.remove('inactivebutton');
+      button12.classList.remove('inactivebutton');
+      button9.onclick = tutorials;
+      button10.onclick = tutorials3;
+      button11.onclick = tutorials3;
+      button12.onclick = tutorials3;
+      initializeGoFight();
+      InitializeMyTurn(turn);
+      
+    } else if (WhosTurnIsit[i] == monstersFight[1] && WhosTurnIsitControl < WhosTurnIsit[i]) {
+      goblinsTurn(1);
+      initializeGoFightInFight();
+    } else if (WhosTurnIsit[i] == monstersFight[2] && WhosTurnIsitControl < WhosTurnIsit[i]) {
+    goblinsTurn(2);
+    initializeGoFightInFight();
+    } else if (WhosTurnIsit[i] == monstersFight[3] && WhosTurnIsitControl < WhosTurnIsit[i]) {
+      goblinsTurn(3);
+      initializeGoFightInFight();
+    }
 
-function normalAtk() {
+  }
+
+
+
+
+
+
+function normalAtk(turn) {
   button9.onclick = tutorials3;
   button10.onclick = tutorials3;
   button11.onclick = tutorials3;
   button12.onclick = tutorials3;
-  setTimeout(function() {
     if(monstersFight.length == 1 ){
       button9.innerText = `${monstersFight[0]}`;
-      button9.onclick = normalAtking(1);
+      button9.onclick = normalAtking(1, turn);
       button10.innerText = " --- ";
       button11.innerText = " --- ";
       button10.onclick = tutorials3;
       button11.onclick = tutorials3;
       
     }
-    else if (monstersFight.length == 2 ){
-      button9.onclick = normalAtking(1);
-      button10.onclick = normalAtking(2);
+    if (monstersFight.length == 2 ){
+      button9.onclick = normalAtking(1, turn);
+      button10.onclick = normalAtking(2, turn);
       button9.innerText = `${monstersFight[0]}`;
       button10.innerText = `${monstersFight[1]}`;
       button11.innerText = " --- ";
       button11.onclick = tutorials3;
     }
-    else if(monstersFight.length == 3 ){
-      button9.onclick = normalAtking(1);
-      button10.onclick = normalAtking(2);
-      button11.onclick = normalAtking(3);
+    if(monstersFight.length == 3 ){
+      button9.onclick = normalAtking(1, turn);
+      button10.onclick = normalAtking(2, turn);
+      button11.onclick = normalAtking(3, turn);
       button9.innerText = `${monstersFight[0]}`;
       button10.innerText = `${monstersFight[1]}`;
       button11.innerText = `${monstersFight[2]}`;
     }
     button12.onclick = InitializeMyTurn;
     button12.innerText = "go back";
-  
-  
-}, 500);
 
 }
 
-function normalAtking(num) {
-  let FightingIndex = num;
+function normalAtking(num, turn) {
   let str = monsterStrFight[0];
   let mgk = monsterMgkFight[0];
-  monsterHealthFight[FightingIndex] -= skillDex[0].baseDamage + eval(skillDex[0].additionalDamage);
+  monsterHealthFight[num] -= skillDex[0].baseDamage + eval(skillDex[0].additionalDamage);
   console.log(eval(skillDex[0].additionalDamage));
   console.log(str);
   console.log(mgk);
 
   monsterManaFight[0] -= skillDex[0].manaCost;
   updateMonsterHealth();
-
+  WhosTurnIsitControl = WhosTurnIsit[turn];
+  button9.classList.add('inactivebutton');
+  button10.classList.add('inactivebutton');
+  button11.classList.add('inactivebutton');
+  button12.classList.add('inactivebutton');
 }
 
   function updateMonsterHealth() {
@@ -1333,8 +1393,7 @@ function normalAtking(num) {
     EnemyCardsTextAll = "";
 
     for(let i = 0; i < monstersFight.length; i++) {
-      for (let j = 0; j < monsters.length; j++) {
-          
+    
           let k = i + 1;
           EnemyCardsText = `  
           <div class="monsterContainer">
@@ -1360,21 +1419,21 @@ function normalAtking(num) {
           console.log(monsterResFight);
           
           EnemyCardsTextAll += EnemyCardsText;
-        }
-        containersForTheeMonsters.innerHTML = `<div class="monsterContainerRow">${EnemyCardsTextAll}</div>`;
       }
+        containersForTheeMonsters.innerHTML = `<div class="monsterContainerRow">${EnemyCardsTextAll}</div>`;
+      
      
     
     console.log("endTurn");
     return;
   }
   
-function InitializeMyTurn(){
+function InitializeMyTurn(turn){
     button9.classList.remove('inactivebutton');
     button10.classList.remove('inactivebutton');
     button11.classList.remove('inactivebutton');
     button12.classList.remove('inactivebutton');
-    button9.onclick = normalAtk;
+    button9.onclick = normalAtk(turn);
     button10.onclick = tutorials3;
     button11.onclick = tutorials3;
     button12.onclick = tutorials3;
@@ -1384,47 +1443,23 @@ function InitializeMyTurn(){
     button12.innerText = "wait";
   }
 
-  
-
-
-
-  button9.onclick = tutorials3;
-  button10.onclick = tutorials3;
-  button11.onclick = tutorials3;
-  button12.onclick = tutorials3;
-
-}
-
-
-/*
-monsterStats.style.display = "block";
-        monsterName.innerText = monstersFight[i].name;
-        monsterHealthText.innerText = monsterHealth;
-        <div>
-
-
-function skillRaffle() {
-  if(playerbaseStat.str > 20) {
-    
+  function goblinsTurn(N) {
+    console.log("enemy use normal attack");
+    let str = monsterStrFight[N];
+    let mgk = monsterMgkFight[N];
+    monsterHealthFight[0] -= skillDex[0].baseDamage + eval(skillDex[0].additionalDamage);
+    monsterManaFight -= skillDex[0].manaCost;
+    console.log(str + " + " + mgk);
   }
-  if(playerbaseStat.mgk > 20) {
-    
-  }
-  if(playerbaseStat.def > 20
-    || playerbaseStat.res > 20) {
-    
-  }
-  if(playerbaseStat.agi > 20) {
-    
+  function initializeGoFightInFight() {
+    characterFaceAvatar.style.backgroundImage = `url('${fightAvatarImageGlobal}')`;
+    nameTextAvatar.innerText = characterName;
+    healthTextAvatar.innerText = monsterHealthFight[0];
+    manaTextAvatar.innerText = monsterManaFight[0];
+    console.log(fightAvatarImageGlobal);
   }
 }
 
-function skillRollRaffle(num) {
-  for(let i = 0; i < num; i++){
-
-  }
-}
-*/
 
 function initializeGoFight() {
 characterFaceAvatar.style.backgroundImage = `url('${fightAvatarImageGlobal}')`;
@@ -1433,7 +1468,6 @@ healthTextAvatar.innerText = healtH;
 manaTextAvatar.innerText = manA;
 console.log(fightAvatarImageGlobal);
 }
-
 
 
 
