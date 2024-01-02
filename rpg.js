@@ -1297,7 +1297,7 @@ function fightingGoblin(number) {
 
     
   }
-
+/*
   WhosTurnIsitControl = 0;
   WhosTurnIsitPerControl = 0;
   while(monsterHealthFight.length > 1) {
@@ -1365,7 +1365,7 @@ function fightingGoblin(number) {
 
 
   }
-
+*/
 function continueFight() {
   button9.onclick = InitializeMyTurn;
   button10.onclick = tutorials3;
