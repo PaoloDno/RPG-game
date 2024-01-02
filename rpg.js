@@ -1297,11 +1297,13 @@ function fightingGoblin(number) {
 
     
   }
-/*
+
   WhosTurnIsitControl = 0;
-  WhosTurnIsitPerControl = 0;
-  while(monsterHealthFight.length > 1) {
-  for(let i = 0; WhosTurnIsitPerControl <= 0; i++) {
+  WhosTurnIsitPerControl = 1;
+  var iter = 0;
+  while(monsterHealthFight.length > 1 && iter < 3) {
+  iter++;
+  if(WhosTurnIsitPerControl > WhosTurnIsitControl){
    
     if(WhosTurnIsit[WhosTurnIsitControl] == characterName) {
       FightText.innerText = "Your Turn";
@@ -1354,24 +1356,28 @@ function fightingGoblin(number) {
       button11.onclick = tutorials3;
       button12.onclick = tutorials3;
       initializeGoFightInFight();
-    }
       
-  
-    WhosTurnIsitPerControl - i;
-    continueFight();
+    }
+    
+   
     } 
   
+    WhosTurnIsitPerControl -= 1;
+    button9.innerText = "Continue";
+    button10.innerText = "wait";
+    button11.innerText = "wait";
+    button12.innerText = "wait";
+    button9.onclick = continueFight;
+    button10.onclick = tutorials3;
+    button11.onclick = tutorials3;
+    button12.onclick = tutorials3;
 
-
-
+    
   }
-*/
+
 function continueFight() {
-  button9.onclick = InitializeMyTurn;
-  button10.onclick = tutorials3;
-  button11.onclick = tutorials3;
-  button12.onclick = tutorials3;
-  WhosTurnIsitPerControl = 1;
+
+    WhosTurnIsitPerControl += 1;
  
 }
 
