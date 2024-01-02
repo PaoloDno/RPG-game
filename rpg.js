@@ -1253,7 +1253,7 @@ function fightingGoblin(number) {
   }
   let WhosTurnIsit = [];
   for (let s = 0 ; s < turnFight.length ; s++) {
-    for(let h = 0; h < indexSpeed.length; h++){
+    for(let h = 1; h < (indexSpeed.length - 1); h++){
       
       if ((turnFight[s] % indexSpeed[0]) == 0) {
         WhosTurnIsit.push(characterName);
@@ -1298,10 +1298,12 @@ function fightingGoblin(number) {
     
   }
 
-  let WhosTurnIsitControl = 0;
-  for (let i = 0; i < WhosTurnIsit.length; i++) {
-    
-    if(WhosTurnIsit[i] == characterName) {
+  WhosTurnIsitControl = 0;
+  WhosTurnIsitPerControl = 0;
+  while(monsterHealthFight.length > 1) {
+  for(let i = 0; WhosTurnIsitPerControl <= 0; i++) {
+   
+    if(WhosTurnIsit[WhosTurnIsitControl] == characterName) {
       FightText.innerText = "Your Turn";
        
       console.log(monsterHealthFight);
@@ -1315,34 +1317,73 @@ function fightingGoblin(number) {
       button11.onclick = tutorials3;
       button12.onclick = tutorials3;
       initializeGoFight();
-      InitializeMyTurn(turn);
+      InitializeMyTurn();
       
-    } else if (WhosTurnIsit[i] == monstersFight[1] && WhosTurnIsitControl < WhosTurnIsit[i]) {
-      goblinsTurn(1);
+    } else if (WhosTurnIsit[WhosTurnIsitControl] == monstersFight[1]) {
+      FightText.innerText = `${monstersFight[1]} turn`;
+      button9.classList.remove('inactivebutton');
+      button10.classList.add('inactivebutton');
+      button11.classList.add('inactivebutton');
+      button12.classList.add('inactivebutton');
+      button9.onclick = goblinsTurn(1);
+      button10.onclick = tutorials3;
+      button11.onclick = tutorials3;
+      button12.onclick = tutorials3;
+      
       initializeGoFightInFight();
-    } else if (WhosTurnIsit[i] == monstersFight[2] && WhosTurnIsitControl < WhosTurnIsit[i]) {
-    goblinsTurn(2);
-    initializeGoFightInFight();
-    } else if (WhosTurnIsit[i] == monstersFight[3] && WhosTurnIsitControl < WhosTurnIsit[i]) {
-      goblinsTurn(3);
+      
+    } else if (WhosTurnIsit[WhosTurnIsitControl] == monstersFight[2]) {
+      FightText.innerText = `${monstersFight[2]} turn`;
+      button9.classList.remove('inactivebutton');
+      button10.classList.add('inactivebutton');
+      button11.classList.add('inactivebutton');
+      button12.classList.add('inactivebutton');
+      button9.onclick = goblinsTurn(2);
+      button10.onclick = tutorials3;
+      button11.onclick = tutorials3;
+      button12.onclick = tutorials3;
+    initializeGoFightInFight(); 
+    } else if (WhosTurnIsit[WhosTurnIsitControl] == monstersFight[3]) {
+      FightText.innerText = `${monstersFight[3]} turn`;
+      button9.classList.remove('inactivebutton');
+      button10.classList.add('inactivebutton');
+      button11.classList.add('inactivebutton');
+      button12.classList.add('inactivebutton');
+      button9.onclick = goblinsTurn(3);
+      button10.onclick = tutorials3;
+      button11.onclick = tutorials3;
+      button12.onclick = tutorials3;
       initializeGoFightInFight();
     }
+      
+  
+    WhosTurnIsitPerControl - i;
+    continueFight();
+    } 
+  
+
+
 
   }
 
+function continueFight() {
+  button9.onclick = InitializeMyTurn;
+  button10.onclick = tutorials3;
+  button11.onclick = tutorials3;
+  button12.onclick = tutorials3;
+  WhosTurnIsitPerControl = 1;
+ 
+}
 
 
-
-
-
-function normalAtk(turn) {
+function normalAtk() {
   button9.onclick = tutorials3;
   button10.onclick = tutorials3;
   button11.onclick = tutorials3;
   button12.onclick = tutorials3;
     if(monstersFight.length == 1 ){
       button9.innerText = `${monstersFight[0]}`;
-      button9.onclick = normalAtking(1, turn);
+      button9.onclick = normalAtking(1);
       button10.innerText = " --- ";
       button11.innerText = " --- ";
       button10.onclick = tutorials3;
@@ -1350,17 +1391,17 @@ function normalAtk(turn) {
       
     }
     if (monstersFight.length == 2 ){
-      button9.onclick = normalAtking(1, turn);
-      button10.onclick = normalAtking(2, turn);
+      button9.onclick = normalAtking(1);
+      button10.onclick = normalAtking(2);
       button9.innerText = `${monstersFight[0]}`;
       button10.innerText = `${monstersFight[1]}`;
       button11.innerText = " --- ";
       button11.onclick = tutorials3;
     }
     if(monstersFight.length == 3 ){
-      button9.onclick = normalAtking(1, turn);
-      button10.onclick = normalAtking(2, turn);
-      button11.onclick = normalAtking(3, turn);
+      button9.onclick = normalAtking(1);
+      button10.onclick = normalAtking(2);
+      button11.onclick = normalAtking(3);
       button9.innerText = `${monstersFight[0]}`;
       button10.innerText = `${monstersFight[1]}`;
       button11.innerText = `${monstersFight[2]}`;
@@ -1370,7 +1411,7 @@ function normalAtk(turn) {
 
 }
 
-function normalAtking(num, turn) {
+function normalAtking(num) {
   let str = monsterStrFight[0];
   let mgk = monsterMgkFight[0];
   monsterHealthFight[num] -= skillDex[0].baseDamage + eval(skillDex[0].additionalDamage);
@@ -1380,7 +1421,6 @@ function normalAtking(num, turn) {
 
   monsterManaFight[0] -= skillDex[0].manaCost;
   updateMonsterHealth();
-  WhosTurnIsitControl = WhosTurnIsit[turn];
   button9.classList.add('inactivebutton');
   button10.classList.add('inactivebutton');
   button11.classList.add('inactivebutton');
@@ -1425,15 +1465,15 @@ function normalAtking(num, turn) {
      
     
     console.log("endTurn");
-    return;
+   
   }
   
-function InitializeMyTurn(turn){
+function InitializeMyTurn(){
     button9.classList.remove('inactivebutton');
     button10.classList.remove('inactivebutton');
     button11.classList.remove('inactivebutton');
     button12.classList.remove('inactivebutton');
-    button9.onclick = normalAtk(turn);
+    button9.onclick = normalAtk;
     button10.onclick = tutorials3;
     button11.onclick = tutorials3;
     button12.onclick = tutorials3;
@@ -1450,6 +1490,7 @@ function InitializeMyTurn(turn){
     monsterHealthFight[0] -= skillDex[0].baseDamage + eval(skillDex[0].additionalDamage);
     monsterManaFight -= skillDex[0].manaCost;
     console.log(str + " + " + mgk);
+    console.log("ends" + `${monstersFight[N - 1]}`+ "turn")
   }
   function initializeGoFightInFight() {
     characterFaceAvatar.style.backgroundImage = `url('${fightAvatarImageGlobal}')`;
