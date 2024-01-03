@@ -1134,66 +1134,86 @@ function goblinFight() {
 }
 
 
+
 function fightingGoblin(number) {
   fightGame.style.display = 'flex';
-  let monstersFight = [];
-  let monsterImageinFight = [];
-  let monsterHealthFight = [];
-  let monsterManaFight = [];
-  let monsterStrFight = [];
-  let monsterMgkFight = [];
-  let monsterSpdFight = [];
-  let monsterAgiFight = [];
-  let monsterDefFight = [];
-  let monsterResFight = [];
-  let EveryoneOnFightSpeed = [];
-  let indexSpeed = [];
-  let SpeedSum = 0;
-  let turnFight = [];
   
-  monsterHealthFight.push(healtH);
-  monsterManaFight.push(manA);
-  monsterStrFight.push(playerbaseStat.str);
-  monsterMgkFight.push(playerbaseStat.mgk);
-  monsterSpdFight.push(playerbaseStat.spd);
-  monsterAgiFight.push(playerbaseStat.agi);
-  monsterDefFight.push(playerbaseStat.def);
-  monsterResFight.push(playerbaseStat.res);
+/* stats inside the fight */
+let monstersFight = [];
+let monsterID = [];
+let monsterImageinFight = [];
+let healthFight = [];
+let manaFight = [];
+let strFight = [];
+let mgkFight = [];
+let spdFight = [];
+let agiFight = [];
+let defFight = [];
+let resFight = [];
+let EveryoneOnFightSpeed = [];
+let indexSpeed = [];
+let turnFight = [];
+let SpeedSum = 0;
+let CurrentTurn = 0;
+let WhosTurn = [];
 
-  //initiaizebutton2
-  button9.onclick = tutorials3;
+  /* character join the Fight */
+  healthFight.push(healtH);
+  manaFight.push(manA);
+  strFight.push(playerbaseStat.str);
+  mgkFight.push(playerbaseStat.mgk);
+  spdFight.push(playerbaseStat.spd);
+  agiFight.push(playerbaseStat.agi);
+  defFight.push(playerbaseStat.def);
+  resFight.push(playerbaseStat.res);
+
+  //initiaize2ndbuttons
+  button9.onclick = normalAtk;
   button10.onclick = tutorials3;
   button11.onclick = tutorials3;
   button12.onclick = tutorials3;
 
   /*i tried using constructor but im too beginner and makes me work slower
-  since i have to apply immediately what im rying to learn
+  since i have to apply everything as i learned it.
   */
   initializeGoFight();
   let EnemyCardsTextAll = " ";
+  let ID = "";
   for(let i = 0; i < number; i++) {
     let diceRoll = Math.floor(Math.random()*100);
+    if (i == 0) {
+      ID = "A";
+    } else if (i == 1) {
+      ID = "B";
+    } else if (i == 2) {
+      ID = "C";
+    }
     if (diceRoll > 70) {
       monstersFight.push(monsters[2].name);
+      monsterID.push(ID);
     } else {
       monstersFight.push(monsters[1].name);
+      monsterID.push(ID);
     }
+  
   }
- 
+    /* INITIALIZE MONSTER CARDS need another function to update monstercards*/
     console.log(monstersFight);
+    console.log("monserID");
+    console.log(monsterID);
   for(let i = 0; i < monstersFight.length; i++) {
     for (let j = 0; j < monsters.length; j++) {
       if( monsters[j].name == monstersFight[i]){
         
         monsterImageinFight.push(monsters[j].monsterImage);
-        monsterHealthFight.push(monsters[j].health);
-        monsterManaFight.push(monsters[j].mana);
-        monsterStrFight.push(monsters[j].str);
-        monsterMgkFight.push(monsters[j].mgk);
-        monsterSpdFight.push(monsters[j].spd);
-        monsterAgiFight.push(monsters[j].agi);
-        monsterDefFight.push(monsters[j].def);
-        monsterResFight.push(monsters[j].res);
+        healthFight.push(monsters[j].health);
+        manaFight.push(monsters[j].mana);
+        strFight.push(monsters[j].str);
+        mgkFight.push(monsters[j].mgk);
+        spdFight.push(monsters[j].spd);
+        agiFight.push(monsters[j].agi);
+        defFight.push(monsters[j].def);
+        resFight.push(monsters[j].res);
         
         
 
@@ -1203,7 +1223,7 @@ function fightingGoblin(number) {
         <img src="${monsters[j].monsterImage}">
         </div>
         <div class="descriptEnemyFight">
-        <p> ${monsters[j].name} <p>
+        <p> ${monsters[j].name} ${monsterID[i]} <p>
         <p> Health: ${monsters[j].health} </p>
         <p> Mana: ${monsters[j].mana} </p>
         </div>
@@ -1211,26 +1231,27 @@ function fightingGoblin(number) {
         `;
 
         console.log(monstersFight);
-        console.log(monsterHealthFight);
-        console.log(monsterManaFight);
-        console.log(monsterStrFight);
-        console.log(monsterMgkFight);
-        console.log(monsterSpdFight);
-        console.log(monsterAgiFight);
-        console.log(monsterDefFight);
-        console.log(monsterResFight);
+        console.log(healthFight);
+        console.log(manaFight);
+        console.log(strFight);
+        console.log(mgkFight);
+        console.log(spdFight);
+        console.log(agiFight);
+        console.log(defFight);
+        console.log(resFight);
         
         EnemyCardsTextAll += EnemyCardsText;
       }
       containersForTheeMonsters.innerHTML = `<div class="monsterContainerRow">${EnemyCardsTextAll}</div>`;
     }
   }
-  
+  /* to get speed of every character involve in the fight */
   EveryoneOnFightSpeed.push(playerbaseStat.spd);
+  /* initial speedSum number used for index in turns later */ 
   SpeedSum = playerbaseStat.spd;
-  for (let k = 1; k < monsterSpdFight.length; k++) {
-    EveryoneOnFightSpeed.push(monsterSpdFight[k]);
-    SpeedSum += monsterSpdFight[k];
+  for (let k = 1; k < spdFight.length; k++) {
+    EveryoneOnFightSpeed.push(spdFight[k]);
+    SpeedSum += spdFight[k];
     
     console.log("SpeedSum"+ SpeedSum);
   }
@@ -1240,274 +1261,293 @@ function fightingGoblin(number) {
   
   indexSpeed.push(Number(speedCalcOnFight));
   
-  
   }
   console.log("indexSpeed");
   console.log(EveryoneOnFightSpeed);
   console.log(indexSpeed);
+  
   let turn = 0;
+  
   for (let l = 0; l < SpeedSum; l++) {
-    
+    while(turn < 80) {
     turnFight.push(turn);
     turn++;
-  }
-  let WhosTurnIsit = [];
+  }}
+  console.log(turnFight);
+  let z = 0;
+
   for (let s = 0 ; s < turnFight.length ; s++) {
-    for(let h = 1; h < (indexSpeed.length - 1); h++){
-      
+    for(let h = 1; h <= (indexSpeed.length); h++){
+      while(z < 20) {
       if ((turnFight[s] % indexSpeed[0]) == 0) {
-        WhosTurnIsit.push(characterName);
+        WhosTurn.push(characterName);
       }  if((turnFight[s] % indexSpeed[h]) == 0){
-        WhosTurnIsit.push(monstersFight[h]);
+        WhosTurn.push(monsterID[s]);
       }
-      
-      
-      
-      /*
-    if ((turnFight[s] % indexSpeed[0]) == 0) {
-        
-        
-        FightText.innerText = "Your Turn";
-       
-        console.log(monsterHealthFight);
-       
-        button9.classList.add('inactivebutton');
-        button10.classList.add('inactivebutton');
-        button11.classList.add('inactivebutton');
-        button12.classList.add('inactivebutton');
-        button9.onclick = tutorials;
-        button10.onclick = tutorials3;
-        button11.onclick = tutorials3;
-        button12.onclick = tutorials3;
-        
     }
-    if((turnFight[s] % indexSpeed[1]) == 0){
-       
-       
-        //EnemyTurn();
-        
-        let N = h - 1; 
-        goblinsTurn(N);
-        initializeGoFightInFight();
-      } */
-
     }
-    
+  
+}
+  console.log(WhosTurn);
 
 
+  const battlePhase = [
+    {
+      name: "yourTurn",
+      "button text": ["Normal Atk", "Skills", "wait", "wait"],
+      "button functions": [normalAtk, tutorials3, tutorials3, tutorials3],
+      text: "Your turn",
+    },
+    {
+      name: "endYourTurn",
+      "button text": ["continue", "---", "---", "---"],
+      "button functions": [endMyTurn, tutorials3, tutorials3, tutorials3],
+      text: "End turn",
+    },
+    {
+      name: "enemyTurn",
+      "button text": ["continue", "continue", "continue", "continue"],
+      "button functions": [continueBattle, tutorials3, tutorials3, tutorials3],
+      text: "Enemy Turn",
+    },
+    {
+      name: "End",
+      "button text": ["continue", "continue", "continue", "continue"],
+      "button functions": [endBattle, tutorials3, tutorials3, tutorials3],
+      text: "You have Won the battle!",
+    }
+  ];
+  
+
+  TurnChecker(CurrentTurn);
+
+  function updatephase(Phases) {
     
+    
+    monsterStats.style.display = "none";
+    button1.innerText = Phases["button text"][0];
+    button2.innerText = Phases["button text"][1];
+    button3.innerText = Phases["button text"][2];
+    button4.innerText = Phases["button text"][3];
+    button1.onclick = Phases["button functions"][0];
+    button2.onclick = Phases["button functions"][1];
+    button3.onclick = Phases["button functions"][2];
+    button4.onclick = Phases["button functions"][3];
+    text.innerText = Phases.text;
+    updateCharacterFightHealth();
+    updateMonsterHealth();
+
   }
 
-  WhosTurnIsitControl = 0;
-  WhosTurnIsitPerControl = 1;
-  var iter = 0;
-  while(monsterHealthFight.length > 1 && iter < 3) {
-  iter++;
-  if(WhosTurnIsitPerControl > WhosTurnIsitControl){
-   
-    if(WhosTurnIsit[WhosTurnIsitControl] == characterName) {
-      FightText.innerText = "Your Turn";
-       
-      console.log(monsterHealthFight);
-     
-      button9.classList.remove('inactivebutton');
-      button10.classList.remove('inactivebutton');
-      button11.classList.remove('inactivebutton');
-      button12.classList.remove('inactivebutton');
-      button9.onclick = tutorials;
-      button10.onclick = tutorials3;
-      button11.onclick = tutorials3;
-      button12.onclick = tutorials3;
-      initializeGoFight();
-      InitializeMyTurn();
-      
-    } else if (WhosTurnIsit[WhosTurnIsitControl] == monstersFight[1]) {
-      FightText.innerText = `${monstersFight[1]} turn`;
-      button9.classList.remove('inactivebutton');
-      button10.classList.add('inactivebutton');
-      button11.classList.add('inactivebutton');
-      button12.classList.add('inactivebutton');
-      button9.onclick = goblinsTurn(1);
-      button10.onclick = tutorials3;
-      button11.onclick = tutorials3;
-      button12.onclick = tutorials3;
-      
-      initializeGoFightInFight();
-      
-    } else if (WhosTurnIsit[WhosTurnIsitControl] == monstersFight[2]) {
-      FightText.innerText = `${monstersFight[2]} turn`;
-      button9.classList.remove('inactivebutton');
-      button10.classList.add('inactivebutton');
-      button11.classList.add('inactivebutton');
-      button12.classList.add('inactivebutton');
-      button9.onclick = goblinsTurn(2);
-      button10.onclick = tutorials3;
-      button11.onclick = tutorials3;
-      button12.onclick = tutorials3;
-    initializeGoFightInFight(); 
-    } else if (WhosTurnIsit[WhosTurnIsitControl] == monstersFight[3]) {
-      FightText.innerText = `${monstersFight[3]} turn`;
-      button9.classList.remove('inactivebutton');
-      button10.classList.add('inactivebutton');
-      button11.classList.add('inactivebutton');
-      button12.classList.add('inactivebutton');
-      button9.onclick = goblinsTurn(3);
-      button10.onclick = tutorials3;
-      button11.onclick = tutorials3;
-      button12.onclick = tutorials3;
-      initializeGoFightInFight();
-      
+  function TurnChecker(TurnCheckerTurn) {
+    console.log(WhosTurn[TurnCheckerTurn]);
+    if(WhosTurn[TurnCheckerTurn] == characterName) {
+      updatephase(battlePhase[0]);
+    } else {
+      updatephase(battlePhase[2]);
     }
+
+  }
+
+
+
+
+
+
+
+  function normalAtk() {
+    //initialize
+    button9.classList.remove('inactivebutton');
     
    
-    } 
-  
-    WhosTurnIsitPerControl -= 1;
-    button9.innerText = "Continue";
-    button10.innerText = "wait";
-    button11.innerText = "wait";
-    button12.innerText = "wait";
-    button9.onclick = continueFight;
+
+    button9.onclick = tutorials3;
     button10.onclick = tutorials3;
     button11.onclick = tutorials3;
     button12.onclick = tutorials3;
-
-    
-  }
-
-function continueFight() {
-
-    WhosTurnIsitPerControl += 1;
- 
-}
-
-
-function normalAtk() {
-  button9.onclick = tutorials3;
-  button10.onclick = tutorials3;
-  button11.onclick = tutorials3;
-  button12.onclick = tutorials3;
-    if(monstersFight.length == 1 ){
-      button9.innerText = `${monstersFight[0]}`;
-      button9.onclick = normalAtking(1);
-      button10.innerText = " --- ";
-      button11.innerText = " --- ";
-      button10.onclick = tutorials3;
-      button11.onclick = tutorials3;
-      
-    }
-    if (monstersFight.length == 2 ){
-      button9.onclick = normalAtking(1);
-      button10.onclick = normalAtking(2);
-      button9.innerText = `${monstersFight[0]}`;
-      button10.innerText = `${monstersFight[1]}`;
-      button11.innerText = " --- ";
-      button11.onclick = tutorials3;
-    }
-    if(monstersFight.length == 3 ){
-      button9.onclick = normalAtking(1);
-      button10.onclick = normalAtking(2);
-      button11.onclick = normalAtking(3);
-      button9.innerText = `${monstersFight[0]}`;
-      button10.innerText = `${monstersFight[1]}`;
-      button11.innerText = `${monstersFight[2]}`;
-    }
-    button12.onclick = InitializeMyTurn;
-    button12.innerText = "go back";
-
-}
-
-function normalAtking(num) {
-  let str = monsterStrFight[0];
-  let mgk = monsterMgkFight[0];
-  monsterHealthFight[num] -= skillDex[0].baseDamage + eval(skillDex[0].additionalDamage);
-  console.log(eval(skillDex[0].additionalDamage));
-  console.log(str);
-  console.log(mgk);
-
-  monsterManaFight[0] -= skillDex[0].manaCost;
-  updateMonsterHealth();
-  button9.classList.add('inactivebutton');
-  button10.classList.add('inactivebutton');
-  button11.classList.add('inactivebutton');
-  button12.classList.add('inactivebutton');
-}
-
-  function updateMonsterHealth() {
-    containersForTheeMonsters.innerHTML = "";
-    let EnemyCardsText = "";
-    EnemyCardsTextAll = "";
-
-    for(let i = 0; i < monstersFight.length; i++) {
-    
-          let k = i + 1;
-          EnemyCardsText = `  
-          <div class="monsterContainer">
-          <div class="monsterImg">
-          <img src="${monsterImageinFight[i]}" alt="monster">
-          </div>
-          <div class="descriptEnemyFight">
-          <p> ${monstersFight[i]} <p>
-          <p> Health: ${monsterHealthFight[k]} </p>
-          <p> Mana: ${monsterManaFight[k]} </p>
-          </div>
-          </div>
-          `;
-  
-          console.log(monstersFight);
-          console.log(monsterHealthFight);
-          console.log(monsterManaFight);
-          console.log(monsterStrFight);
-          console.log(monsterMgkFight);
-          console.log(monsterSpdFight);
-          console.log(monsterAgiFight);
-          console.log(monsterDefFight);
-          console.log(monsterResFight);
-          
-          EnemyCardsTextAll += EnemyCardsText;
+    button10.innerText = " --- ";
+    button11.innerText = " --- ";
+      if(monstersFight.length >= 1 ){
+        button9.innerText = `${monstersFight[0]} ${monsterID[0]}`;
+        button9.onclick = normalAtking1;
+        
       }
-        containersForTheeMonsters.innerHTML = `<div class="monsterContainerRow">${EnemyCardsTextAll}</div>`;
-      
-     
-    
-    console.log("endTurn");
-   
-  }
+      if (monstersFight.length >= 2 ){
+        
+        button10.onclick = normalAtking2;
+       
+        button10.innerText = `${monstersFight[1]} ${monsterID[1]}`;
+        button11.innerText = " --- ";
+        button10.classList.remove('inactivebutton');
+      }
+      if(monstersFight.length >= 3 ){
+       
+        button11.onclick = normalAtking3;
+        button11.innerText = `${monstersFight[2]} ${monsterID[2]}`;
+        button11.classList.remove('inactivebutton');
+      }
   
-function InitializeMyTurn(){
+      button12.onclick = InitializeMyTurn();
+      button12.innerText = "go back";
+      button12.classList.remove('inactivebutton');
+  
+  }
+
+
+
+  //functions
+  function normalAtking1() {
+    
+    let str = strFight[0];
+    let mgk = mgkFight[0];
+    healthFight[1] -= skillDex[0].baseDamage + eval(skillDex[0].additionalDamage);
+    console.log(eval(skillDex[0].additionalDamage));
+    console.log(str);
+    console.log(mgk);
+  
+    manaFight[0] += skillDex[0].manaCost;
+    button9.classList.add('inactivebutton');
+    button10.classList.add('inactivebutton');
+    button11.classList.add('inactivebutton');
+    button12.classList.add('inactivebutton');
+    setTimeout(endMyTurn, 1000);
+  }
+  function normalAtking2() {
+    let str = strFight[0];
+    let mgk = mgkFight[0];
+    healthFight[2] -= skillDex[0].baseDamage + eval(skillDex[0].additionalDamage);
+    console.log(eval(skillDex[0].additionalDamage));
+    console.log(str);
+    console.log(mgk);
+  
+    manaFight[0] += skillDex[0].manaCost;
+    button9.classList.add('inactivebutton');
+    button10.classList.add('inactivebutton');
+    button11.classList.add('inactivebutton');
+    button12.classList.add('inactivebutton');
+    setTimeout(endMyTurn, 1000);
+  }
+  function normalAtking3() {
+    let str = strFight[0];
+    let mgk = mgkFight[0];
+    healthFight[3] -= skillDex[0].baseDamage + eval(skillDex[0].additionalDamage);
+    console.log(eval(skillDex[0].additionalDamage));
+    console.log(str);
+    console.log(mgk);
+  
+    manaFight[0] += skillDex[0].manaCost;
+    button9.classList.add('inactivebutton');
+    button10.classList.add('inactivebutton');
+    button11.classList.add('inactivebutton');
+    button12.classList.add('inactivebutton');
+    setTimeout(endMyTurn, 1000);
+  }
+
+  function endMyTurn() {
+    CurrentTurn++;
+    TurnChecker(CurrentTurn);
+  }
+
+
+  function continueBattle() {
+    if((WhosTurn[currentTurn]  ==  monsterID[3]) == 0){
+       
+       
+      //EnemyTurn();
+     
+      goblinsTurn(1);
+      updateCharacterFightHealth();
+    } else if ((WhosTurn[currentTurn] == monsterID[3]) == 0){
+       
+       
+      //EnemyTurn(); 
+      goblinsTurn(2);
+      updateCharacterFightHealth();
+  } else if ((WhosTurn[currentTurn] == monsterID[mons3]) == 0){
+       
+       
+    //EnemyTurn();
+     
+    goblinsTurn(3);
+    updateCharacterFightHealth();
+}
+function goblinsTurn(N) {
+  console.log("enemy use normal attack");
+  let str = strFight[N];
+  let mgk = mgkFight[N];
+  healthFight[0] -= skillDex[0].baseDamage + eval(skillDex[0].additionalDamage);
+  manaFight -= skillDex[0].manaCost;
+  console.log(str + " + " + mgk);
+  console.log("ends" + `${monstersFight[N - 1]}`+ "turn")
+  CurrentTurn++;
+  TurnChecker(CurrentTurn);
+}
+}
+
+function updateCharacterFightHealth() {
+  characterFaceAvatar.style.backgroundImage = `url('${fightAvatarImageGlobal}')`;
+  nameTextAvatar.innerText = characterName;
+  healthTextAvatar.innerText = healthFight[0];
+  manaTextAvatar.innerText = manaFight[0];
+  console.log(fightAvatarImageGlobal);
+}
+function updateMonsterHealth() {
+  containersForTheeMonsters.innerHTML = "";
+  let EnemyCardsText = "";
+  EnemyCardsTextAll = "";
+
+  for(let i = 0; i < monstersFight.length; i++) {
+  
+        let k = i + 1;
+        EnemyCardsText = `  
+        <div class="monsterContainer">
+        <div class="monsterImg">
+        <img src="${monsterImageinFight[i]}" alt="monster">
+        </div>
+        <div class="descriptEnemyFight">
+        <p> ${monstersFight[i]} <p>
+        <p> Health: ${healthFight[k]} </p>
+        <p> Mana: ${manaFight[k]} </p>
+        </div>
+        </div>
+        `;
+
+        console.log(monstersFight);
+        console.log(healthFight);
+        console.log(manaFight);
+        console.log(strFight);
+        console.log(mgkFight);
+        console.log(spdFight);
+        console.log(agiFight);
+        console.log(defFight);
+        console.log(resFight);
+        
+        EnemyCardsTextAll += EnemyCardsText;
+    }
+      containersForTheeMonsters.innerHTML = `<div class="monsterContainerRow">${EnemyCardsTextAll}</div>`;
+    
+   
+  
+  console.log("endTurn");
+ 
+} 
+  function InitializeMyTurn(){
     button9.classList.remove('inactivebutton');
     button10.classList.remove('inactivebutton');
     button11.classList.remove('inactivebutton');
     button12.classList.remove('inactivebutton');
-    button9.onclick = normalAtk;
-    button10.onclick = tutorials3;
-    button11.onclick = tutorials3;
-    button12.onclick = tutorials3;
-    button9.innerText = "Fight";
-    button10.innerText = "wait";
-    button11.innerText = "wait";
-    button12.innerText = "wait";
+    updatephase(battlePhase[0]);
   }
 
-  function goblinsTurn(N) {
-    console.log("enemy use normal attack");
-    let str = monsterStrFight[N];
-    let mgk = monsterMgkFight[N];
-    monsterHealthFight[0] -= skillDex[0].baseDamage + eval(skillDex[0].additionalDamage);
-    monsterManaFight -= skillDex[0].manaCost;
-    console.log(str + " + " + mgk);
-    console.log("ends" + `${monstersFight[N - 1]}`+ "turn")
+  function endBattle() {
+    goDungeon();
   }
-  function initializeGoFightInFight() {
-    characterFaceAvatar.style.backgroundImage = `url('${fightAvatarImageGlobal}')`;
-    nameTextAvatar.innerText = characterName;
-    healthTextAvatar.innerText = monsterHealthFight[0];
-    manaTextAvatar.innerText = monsterManaFight[0];
-    console.log(fightAvatarImageGlobal);
+  function tutorials3(){
+    FightText.innerText = "Wait...";
   }
+  console.log(characterName);
+
 }
-
-
 function initializeGoFight() {
 characterFaceAvatar.style.backgroundImage = `url('${fightAvatarImageGlobal}')`;
 nameTextAvatar.innerText = characterName;
@@ -1527,85 +1567,6 @@ function InitializeCharStatus() {
   manA = maxManA;
   manaText.innerText = manA;
 }
-
-
-/*
-
-  class Character {
-    constructor(name, level = 0, health = 0, mana = 0, str = 0, mgk = 0, spd = 0 , agi = 0, def = 0 , res = 0) {
-      this.name = name;
-      this.level = level;
-      this.health = health;
-      this.mana = mana;
-      this.str = str;
-      this.mgk = mgk;
-      this.spd = spd;
-      this.agi = agi;
-      this.def = def;
-      this.res = res;
-    }
-  
-    attack(target) {
-      const damage = this.strength - target.resistance;
-      target.health -= damage > 0 ? damage : 0;
-      console.log(`${this.name} attacks ${target.name} for ${damage > 0 ? damage : 0} damage.`);
-    }
-  }
-  
-  const player1 = new Character(characterName, charLevel, healtH, manA, playerbaseStat.str, playerbaseStat.mgk, playerbaseStat.spd, playerbaseStat.agi, playerbaseStat.def, playerbaseStat.res );
-  */
-  /*const player2 = new Character('Player 2', 100, 18, 12, 8);
-  
-  
-  const enemy1 = new Character('Enemy 1', 100, 19, 14, 9);
-  const enemy2 = new Character('Enemy 2', 100, 17, 13, 7);
-  
-  let isGameOver = false;
-  let turn = 1;
-  
-  while (!isGameOver) {
-    console.log(`Turn ${turn}`);
-  
-    player1.attack(enemy1);
-    player2.attack(enemy2);
-  
-    if (enemy1.health <= 0 && enemy2.health <= 0) {
-      console.log('Enemies have been defeated!');
-      isGameOver = true;
-      break;
-    }
-  
-    enemy1.attack(player1);
-    enemy2.attack(player2);
-  
-    if (player1.health <= 0 && player2.health <= 0) {
-      console.log('Players have been defeated!');
-      isGameOver = true;
-      break;
-    }
-  
-    turn++;
-
-  
-  } 
-}
-*/
-function tutorials3(){
-  FightText.innerText = "Wait...";
-}
-console.log(characterName);
-/*
-console.log(player1);
-*/
-
-
-
-
-
-
-
-
-
 
 
 
