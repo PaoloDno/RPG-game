@@ -106,8 +106,8 @@ const playerbaseStat =
   }
 
 
-let maxhealtH = Math.floor(playerbaseStat.hp + ((playerbaseStat.res *5 + playerbaseStat.def*5 / 2))); 
-let  maxManA = Math.floor(100 + (playerbaseStat.mgk * 5) + playerbaseStat.str);
+const maxhealtH = Math.floor(playerbaseStat.hp + ((playerbaseStat.res *5 + playerbaseStat.def*5 / 2))); 
+const  maxManA = Math.floor(100 + (playerbaseStat.mgk * 5) + playerbaseStat.str);
 
 const playerskill = [];
 const playerBag = [];
@@ -959,7 +959,7 @@ function bgDescripAvatar(bgCardImage, Avatar) {
 // Skills available in the market
 const skillDex = [
   //0
-  {name: "normal atk", type: "damage", rarity: "common", target: "enemy", baseDamage: 0, additionalDamage: "str + mgk", baseHeal: 0, additionalHeal: 0, special: "none", manaCost: 0, cost: 50},
+  {name: "normal atk", type: "damage", rarity: "common", target: "enemy", baseDamage: 0, additionalDamage: "str + mgk", baseHeal: 0, additionalHeal: 0, special: "none", manaCost: 10, cost: 50},
   {name: "manaball", type: "damage", rarity: "common", target: "enemy", baseDamage: 20, additionalDamage: "mgk * 1.5", baseHeal: 0, additionalHeal: 0, special: "none", manaCost: 20, cost: 50},
   {name: "manablasth", type: "damage", rarity: "common", target: "enemy", baseDamage: 20, additionalDamage: "mgk * 2.2", baseHeal: 0, additionalHeal: 0, special: "none", manaCost: 20, cost: 50},
   {name: "manabarrier", type: "shield", rarity: "common", target: "ally", baseDamage: 0, additionalDamage: 0, baseHeal: 0, additionalHeal: 0, special: "shield += 4 * (res * mgk);", manaCost: 20, cost: 50},
@@ -1314,7 +1314,7 @@ let WhosTurn = [];
     {
       name: "enemyTurn",
       "button text": ["continue", "continue", "continue", "continue"],
-      "button functions": [continueBattle, tutorials3, tutorials3, tutorials3],
+      "button functions": [continueBattle, continueBattle, continueBattle, continueBattle],
       text: "Enemy Turn",
     },
     {
@@ -1343,17 +1343,26 @@ let WhosTurn = [];
     text.innerText = Phases.text;
     updateCharacterFightHealth();
     updateMonsterHealth();
+    
 
   }
 
   function TurnChecker(TurnCheckerTurn) {
     console.log(WhosTurn[TurnCheckerTurn]);
     if(WhosTurn[TurnCheckerTurn] == characterName) {
-      
+       button9.classList.remove('inactivebutton');
+       button10.classList.remove('inactivebutton');
+       button11.classList.remove('inactivebutton');
+       button12.classList.remove('inactivebutton');
       FightText.innerText += "yOUR TURN";
       updatephase(battlePhase[0]);
     } else {
-      FightText.innerText += "WNWMY TURN TURN";
+       
+      FightText.innerText += "EneWMY TURN TURN";
+        button9.classList.remove('inactivebutton');
+       button10.classList.remove('inactivebutton');
+       button11.classList.remove('inactivebutton');
+       button12.classList.remove('inactivebutton');
       updatephase(battlePhase[2]);
       
     }
@@ -1463,21 +1472,25 @@ let WhosTurn = [];
 
 
   function continueBattle() {
+       button9.classList.add('inactivebutton');
+       button10.classList.add('inactivebutton');
+       button11.classList.add('inactivebutton');
+       button12.classList.add('inactivebutton');
     if((WhosTurn[CurrentTurn]  ==  monsterID[0])){
        
       //EnemyTurn();
-      FightText.innerText += "A attacks";
+      FightText.innerText += "\nA attacks";
       goblinsTurn(1);
       
     } else if ((WhosTurn[CurrentTurn] == monsterID[1])){
       //EnemyTurn(); 
-      FightText.innerText += "b attacks";
+      FightText.innerText += "\nB attacks";
       goblinsTurn(2);
       
       
-  } else if ((WhosTurn[CurrentTurn] == monsterID[2])){       
+    } else if ((WhosTurn[CurrentTurn] == monsterID[2])){       
     //EnemyTurn();
-    FightText.innerText += "c attacks";
+    FightText.innerText += "\nC attacks";
     goblinsTurn(3);
     
     
@@ -1487,12 +1500,18 @@ function goblinsTurn(N) {
   let str = strFight[N];
   let mgk = mgkFight[N];
   healthFight[0] -= skillDex[0].baseDamage + eval(skillDex[0].additionalDamage);
-  manaFight -= skillDex[0].manaCost;
+  manaFight[N] += skillDex[0].manaCost;
   console.log(str + " + " + mgk);
   console.log("ends" + `${monstersFight[N - 1]}`+ "turn")
+  FightText.innerText += "\nEnemy use normal Attack";
   updateCharacterFightHealth();
+  updateMonsterHealth();
+  button9.classList.add('inactivebutton');
+  button10.classList.add('inactivebutton');
+  button11.classList.add('inactivebutton');
+  button12.classList.add('inactivebutton');
   CurrentTurn++;
-  TurnChecker(CurrentTurn);
+  setTimeout(TurnChecker(CurrentTurn), 1200);
 }
 }
 
@@ -1502,6 +1521,7 @@ function updateCharacterFightHealth() {
   healthTextAvatar.innerText = healthFight[0];
   manaTextAvatar.innerText = manaFight[0];
   console.log(fightAvatarImageGlobal);
+  console.log(manaFight);
 }
 function updateMonsterHealth() {
   containersForTheeMonsters.innerHTML = "";
@@ -1572,10 +1592,10 @@ console.log(fightAvatarImageGlobal);
 
 
 function InitializeCharStatus() {
-  maxhealtH = Math.floor(playerbaseStat.hp + ((playerbaseStat.res *5 + playerbaseStat.def*5 / 2))); 
+  const maxhealtH = Math.floor(playerbaseStat.hp + ((playerbaseStat.res *5 + playerbaseStat.def*5 / 2))); 
   healtH = maxhealtH;
   healthText.innerText = healtH;
-  maxManA = Math.floor(100 + (playerbaseStat.mgk * 5) + playerbaseStat.str);
+  const maxManA = Math.floor(100 + (playerbaseStat.mgk * 5) + playerbaseStat.str);
   manA = maxManA;
   manaText.innerText = manA;
 }
