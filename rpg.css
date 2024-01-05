@@ -11,11 +11,12 @@ body {
 
 #game {
   max-width: 600px;
-  max-height: 900px;
+  max-height: 850px;
   background-color: #ffffff;
   color: #ffffff;
   margin: 30px auto 0px;
   padding: 10px;
+  font-size: 1rem;
 }
 
 #controls,
@@ -285,7 +286,7 @@ max-width: 600px;
 max-height: 900px;
 background-color: #ffffff;
 color: #ffffff;
-margin: 30px auto 0px;
+margin: 30px auto;
 padding: 10px;
 background-color: #c5a97f;
 }
@@ -336,11 +337,13 @@ width: 100%;
 .monsterImg,
 .descriptEnemyFight {
   display: inline-block;
-  margin: 5px;
+  margin: 0px;
   width: 100px;
-  height: 100px;
   overflow: hidden;
   object-fit: fill;
+}
+.monsterImg{
+  height: 100px;
 }
 .avatarFight {
   display: inline-block;
@@ -373,11 +376,12 @@ width: 100%;
   justify-content: space-evenly;
 }
 #controlsFight {
-  width: 80%;
+  width: 90%;
   height: 40px;
   justify-content: space-evenly;
   align-items: center;
   margin-top: 5px;
+  margin-left: 1rem;
   background-color: #e6e6e6;
 }
 #FightText {
@@ -389,7 +393,39 @@ width: 100%;
   justify-content: space-evenly;
   align-items: center;
   margin-top: 5px;
+  overflow-y: scroll;
 }
 .inactivebutton {
   opacity: 0.4;
+}
+@media only screen and (max-width: 800px) {
+  #game {
+    margin-left: auto;
+    margin-right: auto;
+    width: 95%;
+    height: 100%;
+    overflow-y: scroll;
+  }
+  .modal-content2 {
+    width: 90%;
+    height: 80%;
+  }
+  #monstercards{
+    width:80%;
+  }
+  .monsterContainer{
+    margin: 0;
+  }
+  .descriptEnemyFight {
+    display: inline-block;
+    margin: 0;
+    width: 100px;
+   
+  }
+  #fightParty {
+    margin: 0;
+  }
+}
+.working {
+  border: 2px solid greenyellow;
 }
