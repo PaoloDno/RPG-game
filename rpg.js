@@ -1570,12 +1570,13 @@ function updateMonsterHealth() {
     button11.classList.remove('inactivebutton');
     button12.classList.remove('inactivebutton');
   }
+  
 
   function endBattle() {
     goDungeon();
   }
   function tutorials3(){
-    FightText.innerText = "Wait...";
+    FightText.innerText = "\nWait...\n";
   }
   console.log(characterName);
 
