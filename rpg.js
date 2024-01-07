@@ -149,7 +149,7 @@ const monsters = [
     agi: 4,
     def: 10,
     res: 5,
-    monsterImage: "monsimages/slime.jpg"
+    monsterImage: "monsImages/slime.jpg"
   },
   { //1
     name: "goblin",
@@ -162,7 +162,7 @@ const monsters = [
     agi: 20,
     def: 20,
     res: 20,
-    monsterImage: "monsimages/goblin.jpg"
+    monsterImage: "monsImages/goblin.jpg"
   },
   { //2
     name: "goblin shaman",
@@ -171,11 +171,24 @@ const monsters = [
     mana: 200,
     str: 5,
     mgk: 35,
-    spd: 35,
+    spd: 25,
     agi: 0,
     def: 20,
     res: 20,
-    monsterImage: "monsimages/goblinShaman.jpg"
+    monsterImage: "monsImages/goblinShaman.jpg"
+  },
+  { //2
+    name: "goblin Hob",
+    level: 25,
+    health: 450,
+    mana: 200,
+    str: 45,
+    mgk: 0,
+    spd: 25,
+    agi: 0,
+    def: 60,
+    res: 60,
+    monsterImage: "monsImages/hobGoblin.png"
   },
   {
     name: "fanged beast",
@@ -188,8 +201,7 @@ const monsters = [
     agi: 30,
     def: 40,
     res: 20,
-    monsterImage: "monsimages/goblin.jpg"
-
+    monsterImage: "monsImages/goblin.jpg"
   },
   {
     name: "evolve fanged beast",
@@ -202,7 +214,7 @@ const monsters = [
     agi: 30,
     def: 40,
     res: 20,
-    monsterImage: "monsimages/slime.jpg"
+    monsterImage: "monsImages/slime.jpg"
   },
   {
     name: "dragon",
@@ -215,7 +227,7 @@ const monsters = [
     agi: 10,
     def: 200,
     res: 200,
-    monsterImage: "monsimages/smug.jpg"
+    monsterImage: "monsImages/smug.jpg"
   }
 ]
 const locations = [
@@ -674,9 +686,9 @@ function phase1A() {
       backgDescrip.style.display = 'grid';
       backgDescrip.style.opacity = '1';     
 }, 1000)
-  setTimeout(function() {
-    update(locations[4]); 
-}, 2000)
+
+  update(locations[4]); 
+
 }
 function phase1B() {
   const charClass = {
@@ -755,9 +767,8 @@ function phase1C() {
     backgDescrip.style.display = 'grid';
     backgDescrip.style.opacity = '1';     
 }, 1000)
-  setTimeout(function() {
     update(locations[4]); 
-}, 2000)
+
 }
 function phase1D() {
   const charClass = {
@@ -799,9 +810,8 @@ function phase1D() {
     backgDescrip.style.opacity = '1';
     avatarCard.style.opacity = "1";     
 }, 500);
-  setTimeout(function() {
     update(locations[4]); 
-}, 1000);
+
 }
 
 
@@ -1101,14 +1111,8 @@ function treasureRoom() {
 }
 function campRoom() {
   healtH += 30;
-  manA += 50;
-  maxhealtH = Math.floor(playerbaseStat.hp + ((playerbaseStat.res * 5 + playerbaseStat.def*5 ) / 2));
-  maxManA = Math.floor(100 + (playerbaseStat.mgk * 5) + playerbaseStat.str);
   if (healtH >= maxhealtH) {
-    health = maxhealtH;
-  }
-  if (manA >= maxManA) {
-    manA = maxManA;
+    InitializeCharStatus();
   }
   
   healthText.innerText = healtH;
@@ -1181,6 +1185,7 @@ let WhosTurn = [];
   let ID = "";
   for(let i = 0; i < number; i++) {
     let diceRoll = Math.floor(Math.random()*100);
+    diceRoll += distancefromTown * 30;
     if (i == 0) {
       ID = "A";
     } else if (i == 1) {
@@ -1188,7 +1193,11 @@ let WhosTurn = [];
     } else if (i == 2) {
       ID = "C";
     }
-    if (diceRoll > 70) {
+    if (diceRoll > 101 && diceRoll < 120) {
+      monstersFight.push(monsters[2].name);
+      monsterID.push(ID);
+    }
+    if (diceRoll > 70 && diceRoll < 100) {
       monstersFight.push(monsters[2].name);
       monsterID.push(ID);
     } else {
@@ -1319,7 +1328,7 @@ let WhosTurn = [];
     },
     {
       name: "End",
-      "button text": ["continue", "continue", "continue", "continue"],
+      "button text": ["End", "continue", "continue", "continue"],
       "button functions": [endBattle, tutorials3, tutorials3, tutorials3],
       text: "You have Won the battle!",
     }
@@ -1330,7 +1339,8 @@ let WhosTurn = [];
 
   function updatephase(Phases) {
     
-    
+    updateMonsterHealth();
+
     monsterStats.style.display = "none";
     button9.innerText = Phases["button text"][0];
     button10.innerText = Phases["button text"][1];
@@ -1341,14 +1351,17 @@ let WhosTurn = [];
     button11.onclick = Phases["button functions"][2];
     button12.onclick = Phases["button functions"][3];
     text.innerText = Phases.text;
-    updateCharacterFightHealth();
-    updateMonsterHealth();
+ 
     
 
   }
 
   function TurnChecker(TurnCheckerTurn) {
     console.log(WhosTurn[TurnCheckerTurn]);
+    if(monstersFight.length <= 0){
+      button9.classList.remove('inactivebutton');
+      updatephase(battlePhase[3]);
+    } else {
     if(WhosTurn[TurnCheckerTurn] == characterName) {
        button9.classList.remove('inactivebutton');
        button10.classList.remove('inactivebutton');
@@ -1366,7 +1379,7 @@ let WhosTurn = [];
       updatephase(battlePhase[2]);
       
     }
-
+  }
   }
 
 
@@ -1465,6 +1478,9 @@ let WhosTurn = [];
   }
 
   function endMyTurn() {
+    
+  
+    CheckMonsterHealth();
     console.log(CurrentTurn);
     CurrentTurn++;
     TurnChecker(CurrentTurn);
@@ -1476,23 +1492,26 @@ let WhosTurn = [];
        button10.classList.add('inactivebutton');
        button11.classList.add('inactivebutton');
        button12.classList.add('inactivebutton');
-    if((WhosTurn[CurrentTurn]  ==  monsterID[0])){
+    if((WhosTurn[CurrentTurn]  ==  monsterID[0]) && healthFight[1] > 0){
        
       //EnemyTurn();
       FightText.innerText += "\nA attacks";
       goblinsTurn(1);
       
-    } else if ((WhosTurn[CurrentTurn] == monsterID[1])){
+    } else if ((WhosTurn[CurrentTurn] == monsterID[1]) && healthFight[2] > 0){
       //EnemyTurn(); 
       FightText.innerText += "\nB attacks";
       goblinsTurn(2);
       
       
-    } else if ((WhosTurn[CurrentTurn] == monsterID[2])){       
+    } else if ((WhosTurn[CurrentTurn] == monsterID[2]) && healthFight[3] > 0){       
     //EnemyTurn();
     FightText.innerText += "\nC attacks";
     goblinsTurn(3);
-    
+    } else {
+      CurrentTurn++;
+      setTimeout(TurnChecker(CurrentTurn), 1200);
+    }
     
 }
 function goblinsTurn(N) {
@@ -1513,20 +1532,24 @@ function goblinsTurn(N) {
   CurrentTurn++;
   setTimeout(TurnChecker(CurrentTurn), 1200);
 }
-}
+
 
 function updateCharacterFightHealth() {
   characterFaceAvatar.style.backgroundImage = `url('${fightAvatarImageGlobal}')`;
   nameTextAvatar.innerText = characterName;
+  CheckMonsterHealth();
+  updateMonsterHealth();
   healthTextAvatar.innerText = healthFight[0];
   manaTextAvatar.innerText = manaFight[0];
   console.log(fightAvatarImageGlobal);
   console.log(manaFight);
+  console.log(WhosTurn);
 }
 function updateMonsterHealth() {
   containersForTheeMonsters.innerHTML = "";
   let EnemyCardsText = "";
   EnemyCardsTextAll = "";
+
 
   for(let i = 0; i < monstersFight.length; i++) {
   
@@ -1562,7 +1585,30 @@ function updateMonsterHealth() {
   
   console.log("endTurn");
   console.log(CurrentTurn);
- 
+  
+}
+  function CheckMonsterHealth() {
+
+    console.log(healthFight);
+    console.log(defFight)
+    for(let i = 1 ; i <= healthFight.length; i++) {
+      if(healthFight[i] <= 0) {
+        let j = i - 1;
+        monstersFight.splice(j,1);
+        monsterImageinFight.splice(j,1);
+        healthFight.splice(i,1);
+        manaFight.splice(i,1);
+        strFight.splice(i,1);
+        mgkFight.splice(i,1);
+        spdFight.splice(i,1);
+        agiFight.splice(i,1);
+        defFight.splice(i,1);
+        resFight.splice(i,1);
+        monsterID.splice(j,1);
+        
+      }
+    }
+    
 } 
   function InitializeMyTurn(){
     button9.classList.remove('inactivebutton');
@@ -1573,14 +1619,28 @@ function updateMonsterHealth() {
   
 
   function endBattle() {
-    goDungeon();
-  }
+    button9.classList.remove('inactivebutton');
+    fightGame.style.display = 'none';
+    healtH = healthFight[0];
+    FightText.innerText = `\n Distance from town: ${distancefromTown} \n`;
+    healthText.innerText = healtH;
+    manA = manaFight[0];
+    golD += (30 * number);
+    goldText.innerText = golD;
+    xP += (20 * number);
+    xpText.innerText = xP;
+    distancefromTown++;
+    goGoblin();
+    }
+  
   function tutorials3(){
     FightText.innerText = "\nWait...\n";
   }
   console.log(characterName);
 
 }
+
+
 function initializeGoFight() {
 characterFaceAvatar.style.backgroundImage = `url('${fightAvatarImageGlobal}')`;
 nameTextAvatar.innerText = characterName;
@@ -1625,5 +1685,4 @@ avatarCard.addEventListener('mouseout', () => {
 
 
 
-InitializeCharStatus();
 initializeGoFight();
