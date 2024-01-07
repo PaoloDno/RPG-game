@@ -1193,14 +1193,14 @@ let WhosTurn = [];
     } else if (i == 2) {
       ID = "C";
     }
-    if (diceRoll > 101 && diceRoll < 120) {
+    if (diceRoll >= 101 && diceRoll < 120) {
       monstersFight.push(monsters[2].name);
       monsterID.push(ID);
     }
-    if (diceRoll > 70 && diceRoll < 100) {
+    else if (diceRoll >= 70 && diceRoll < 100) {
       monstersFight.push(monsters[2].name);
       monsterID.push(ID);
-    } else {
+    } else if (diceRoll < 70){
       monstersFight.push(monsters[1].name);
       monsterID.push(ID);
     }
@@ -1367,17 +1367,27 @@ let WhosTurn = [];
        button10.classList.remove('inactivebutton');
        button11.classList.remove('inactivebutton');
        button12.classList.remove('inactivebutton');
-      FightText.innerText += "yOUR TURN";
+      FightText.innerText += "\nYour TURN..";
+      FightText.scrollTop = FightText.scrollHeight;
       updatephase(battlePhase[0]);
-    } else {
+    } else if ((
+    (WhosTurn[CurrentTurn]  ==  monsterID[0]) ||
+    (WhosTurn[CurrentTurn]  ==  monsterID[1]) ||
+    (WhosTurn[CurrentTurn]  ==  monsterID[2]) )
+    && healthFight[1] > 0 )
+    {
        
-      FightText.innerText += "EneWMY TURN TURN";
+      FightText.innerText += "\nEnemy turn ..";
         button9.classList.remove('inactivebutton');
        button10.classList.remove('inactivebutton');
        button11.classList.remove('inactivebutton');
        button12.classList.remove('inactivebutton');
       updatephase(battlePhase[2]);
-      
+    } else {
+      CurrentTurn++;
+      FightText.innerText += `\n current turn: ${CurrentTurn}`;
+      FightText.scrollTop = FightText.scrollHeight;
+      TurnChecker(CurrentTurn);
     }
   }
   }
@@ -1434,11 +1444,16 @@ let WhosTurn = [];
     
     let str = strFight[0];
     let mgk = mgkFight[0];
-    healthFight[1] -= skillDex[0].baseDamage + eval(skillDex[0].additionalDamage);
+    let agi = agiFight[0];
+    let power = 0;
+    power = skillDex[0].baseDamage + eval(skillDex[0].additionalDamage);
+    Math.floor(Math.random()*(agiFight[1]+agi)) < agi ? (power *= 2) : (power *= 1);
+    power -= (defFight[1] + (resFight[1] / 2));
+    healthFight [1] -= power;
     console.log(eval(skillDex[0].additionalDamage));
     console.log(str);
     console.log(mgk);
-  
+    FightText.innerText += `\n You use ${skillDex[0].name} it deals ${power} damage`;
     manaFight[0] += skillDex[0].manaCost;
     button9.classList.add('inactivebutton');
     button10.classList.add('inactivebutton');
@@ -1448,12 +1463,17 @@ let WhosTurn = [];
   }
   function normalAtking2() {
     let str = strFight[0];
-    let mgk = mgkFight[0];
-    healthFight[2] -= skillDex[0].baseDamage + eval(skillDex[0].additionalDamage);
+    let mgk = mgkFight[0]; 
+    let agi = agiFight[0];
+     
+    let power = skillDex[0].baseDamage + eval(skillDex[0].additionalDamage);
+    Math.floor(Math.random()*(agiFight[2]+agi)) < agi ? (power *= 2) : (power *= 1);
+    power -= (defFight[2] + (resFight[2] / 2));
+    healthFight [2] -= power;
     console.log(eval(skillDex[0].additionalDamage));
     console.log(str);
     console.log(mgk);
-  
+    FightText.innerText += `\n You use ${skillDex[0].name} \n it deals ${power} damage`;
     manaFight[0] += skillDex[0].manaCost;
     button9.classList.add('inactivebutton');
     button10.classList.add('inactivebutton');
@@ -1463,12 +1483,17 @@ let WhosTurn = [];
   }
   function normalAtking3() {
     let str = strFight[0];
-    let mgk = mgkFight[0];
-    healthFight[3] -= skillDex[0].baseDamage + eval(skillDex[0].additionalDamage);
+    let mgk = mgkFight[0]; 
+    let agi = agiFight[0];
+     
+    let power = skillDex[0].baseDamage + eval(skillDex[0].additionalDamage);
+    Math.floor(Math.random()*(agiFight[3]+agi)) < agi ? (power *= 2) : (power *= 1);
+    power -= (defFight[3] + (resFight[3] / 2));
+    healthFight [3] -= power;
     console.log(eval(skillDex[0].additionalDamage));
     console.log(str);
     console.log(mgk);
-  
+    FightText.innerText += `\n You use ${skillDex[0].name} \n it deals ${power} damage`;
     manaFight[0] += skillDex[0].manaCost;
     button9.classList.add('inactivebutton');
     button10.classList.add('inactivebutton');
@@ -1495,18 +1520,18 @@ let WhosTurn = [];
     if((WhosTurn[CurrentTurn]  ==  monsterID[0]) && healthFight[1] > 0){
        
       //EnemyTurn();
-      FightText.innerText += "\nA attacks";
+      FightText.innerText += `${monstersFight[0]} A attacks\n`;
       goblinsTurn(1);
       
     } else if ((WhosTurn[CurrentTurn] == monsterID[1]) && healthFight[2] > 0){
       //EnemyTurn(); 
-      FightText.innerText += "\nB attacks";
+      FightText.innerText += `${monstersFight[1]} A attacks\n`;
       goblinsTurn(2);
       
       
     } else if ((WhosTurn[CurrentTurn] == monsterID[2]) && healthFight[3] > 0){       
     //EnemyTurn();
-    FightText.innerText += "\nC attacks";
+    FightText.innerText += `${monstersFight[2]} A attacks\n`;
     goblinsTurn(3);
     } else {
       CurrentTurn++;
@@ -1522,7 +1547,8 @@ function goblinsTurn(N) {
   manaFight[N] += skillDex[0].manaCost;
   console.log(str + " + " + mgk);
   console.log("ends" + `${monstersFight[N - 1]}`+ "turn")
-  FightText.innerText += "\nEnemy use normal Attack";
+  FightText.innerText += "\nIt use normal Attack\n";
+  FightText.scrollTop = FightText.scrollHeight;
   updateCharacterFightHealth();
   updateMonsterHealth();
   button9.classList.add('inactivebutton');
@@ -1630,6 +1656,7 @@ function updateMonsterHealth() {
     xP += (20 * number);
     xpText.innerText = xP;
     distancefromTown++;
+    
     goGoblin();
     }
   
