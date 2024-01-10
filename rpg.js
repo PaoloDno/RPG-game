@@ -235,7 +235,7 @@ const locations = [
     {
         name: "town square", //0
         "button text": ["Go to store", "Go to dungeon", "Go to guild", "Go to Inn"],
-        "button functions": [goStore, goDungeon, goGuild, goInn],
+        "button functions": [tutorials, goDungeon, tutorials, goInn],
         text: "You are in the town square. You see a sign that says \"Store\".",
         bgimage: "bgimages/town.jpg"
     },
