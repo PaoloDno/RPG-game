@@ -886,7 +886,7 @@ const skillDex = [
   {name: "Wrath", type: "damage", rarity: "unique", target: "ally", baseDamage: playerbaseStat.def, additionalDamage: "(str * 2) + res + def", baseHeal: 0, additionalHeal:  0, special: "dmg += ((res + def) / 3)", manaCost: 50, cost: 50},
   {name: "Swallow Reversal",type: "damage", rarity: "unique",target: "ally", baseDamage: playerbaseStat.spd, additionalDamage: "(spd + agi) * 1.5", baseHeal: 0, additionalHeal:  0, special: "spd += 10", manaCost: 50, cost: 50},
   {name: "Explosion",type: "damage", rarity: "unique",target: "ally", baseDamage: playerbaseStat.mgk, additionalDamage: "mgk + (mana * 2)", baseHeal: 0, additionalHeal:  0, special: "mana = 0", manaCost: 0, cost: 50},
-  {name: "purification",type: "damage", rarity: "unique",target: "ally", baseDamage: playerbaseStat.res, additionalDamage: "(2 * res) + def)", baseHeal: 0, additionalHeal: "", special: "health += (res + def)", manaCost: 50, cost: 50}
+  {name: "purification",type: "damage", rarity: "unique",target: "ally", baseDamage: playerbaseStat.res, additionalDamage: "(2 * res) + def", baseHeal: 0, additionalHeal: "", special: "health += (res + def)", manaCost: 50, cost: 50}
 
 ]
 monsterSkillDex = [
