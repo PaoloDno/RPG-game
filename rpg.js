@@ -5,7 +5,6 @@ let golD = 50;
 let charLevel = 0;
 let currentWeapon = 0;
 let currentEquipment = 0;
-let fighting;
 let monsterHealth;
 let inventoryWeapon = ["stick"];
 let inventoryEquipment = ["adventurer gear"];
@@ -20,6 +19,7 @@ let CharStatus = [
 { name: "poison", turn: 999  },
 { name: "stun", turn: 1 },
 ];
+let score = 0;
 let raffleSkill = [];
 let CharacterSkillList = [];
 let CharacterBlessings = [];
@@ -34,6 +34,7 @@ const namebutton = document.querySelector("#nameButton");
 const skillsSetText = document.querySelector("#skillsSetsText");
 const blessingDisplay = document.querySelector("#blessingDisplay");
 const blessingText = document.querySelector("#blessingText");
+const scoreText = document.querySelector("#scoreText");
 //buttons
 const button1 = document.querySelector("#button1");
 const button2 = document.querySelector("#button2");
@@ -67,7 +68,7 @@ const modal1 = document.querySelector("#enterCharacterName");
 //fight
 const fightGame = document.querySelector("#fightGame");
 const containersForTheeMonsters = document.querySelector(".containersForTheeMonsters");
-let distancefromTown = 0;
+var distancefromTown = 0;
 const characterFaceAvatar = document.querySelector("#characterFaceAvatar");
 const nameTextAvatar = document.querySelector("#nameTextAvatar");
 const healthTextAvatar = document.querySelector("#healthTextAvatar");
@@ -177,7 +178,7 @@ const monsters = [
     res: 20,
     monsterImage: "monsImages/goblinShaman.jpg"
   },
-  { //2
+  { //3
     name: "goblin Hob",
     level: 25,
     health: 450,
@@ -201,10 +202,10 @@ const monsters = [
     agi: 30,
     def: 40,
     res: 20,
-    monsterImage: "monsImages/goblin.jpg"
+    monsterImage: "monsImages/legosi.jpg"
   },
-  {
-    name: "evolve fanged beast",
+  { //5
+    name: "evolve beast",
     level: 30,
     health: 500,
     mana: 400,
@@ -214,9 +215,9 @@ const monsters = [
     agi: 30,
     def: 40,
     res: 20,
-    monsterImage: "monsImages/slime.jpg"
+    monsterImage: "monsImages/magicLegosi.jpg"
   },
-  {
+  { //6
     name: "dragon",
     level: 50,
     health: 1000,
@@ -227,7 +228,7 @@ const monsters = [
     agi: 10,
     def: 200,
     res: 200,
-    monsterImage: "monsImages/smug.jpg"
+    monsterImage: "monsImages/veldora.jpg"
   }
 ]
 const locations = [
@@ -282,7 +283,7 @@ const locations = [
     },
     {
       name: "goDungeon", //7
-      "button text": ["goblin cave", "unsleeping forest", "far far away", "back to town"],
+      "button text": ["dungeon time", "dungeon time", "DUNGEON!", "back to town"],
       "button functions": [ goGoblin, tutorials, tutorials, goTown],/*[getQuest, adventurerHall, gotoReceptionist, contributeToGuild],*/
       text: "You enter the goblin cave",
       bgimage: "bgimages/cave.jpg"
@@ -290,51 +291,39 @@ const locations = [
     {
     name: "goGoblin", //8
     "button text": ["forward", "forward", "forward", "back"],
-    "button functions": [ caveEvent, caveEvent,, caveEvent, goTown],/*[getQuest, adventurerHall, gotoReceptionist, contributeToGuild],*/
+    "button functions": [ caveEvent, caveEvent, caveEvent, goBackTown],/*[getQuest, adventurerHall, gotoReceptionist, contributeToGuild],*/
     text: "you explore the goblin cave",
     bgimage: "bgimages/cave.jpg"
     },
     {
-        name: "goInn", //8
-        "button text": ["Buy Foods", "Check-in", "Ask for info", "Gamble"],
-        "button functions": [ tutorials, tutorials, tutorials, goTown],/*[attack, dodge, goTown, gambleInn],*/
-        text: "You are fighting a monster.",
-        bgimage: "bgimages/cave2.jpg"
+      name: "goForest", //9
+      "button text": ["forward", "forward", "forward", "back"],
+      "button functions": [tutorials, tutorials, tutorials, goBackTown],/*[attack, dodge, goTown, gambleInn],*/
+      text: "You are fighting a monster.",
+      bgimage: "bgimages/cave2.jpg"
     },
     {
-      name: "Buy Equipment",
-      "button text": ["Buy equipment", "Buy weapon", "Buy Equipment", "Go to town square"],
-      "button functions": [buyItem, buyWeapon, buyEquipment, goTown],
-      text: "You enter the store.",
-      bgimage: "bgimages/town_store.jpg"
+      name: "goFarFarAway", //10
+      "button text": ["forward", "forward", "forward", "back"],
+      "button functions": [tutorials, tutorials, tutorials, goBackTown],/*[attack, dodge, goTown, gambleInn],*/
+      text: "You are fighting a monster.",
+      bgimage: "bgimages/cave2.jpg"
     },
     {
-        name: "kill monster",
-        "button text": ["Go to town square", "Go to town square", "Go to town square"],
-        "button functions": [goTown, goTown, goTown],
-        text: 'The monster screams "Arg!" as it dies. You gain experience points and find gold.',
-        bgimage: "bgimages/slime.jpg"
+        name: "goInn", //11
+        "button text": ["Rest", "Rest", "Rest", "exit"],
+        "button functions": [ checkIn, checkIn, checkIn, goTown],/*[attack, dodge, goTown, gambleInn],*/
+        text: "You are in the Inn rent a room to restore mana and health for 50 gold",
+        bgimage: "bgimages/Inn.jpg"
     },
     {
-        name: "lose",
-        "button text": ["REPLAY?", "REPLAY?", "REPLAY?"],
-        "button functions": [restart, restart, restart],
-        text: "You die. ☠️",
-        bgimage: "bgimages/slime.jpg"
+      name: "Buy guild", //12
+      "button text": ["Buy equipment1", "Buy weapon", "Buy Equipment", "Go to town square"],
+      "button functions": [tutorials, tutorials, tutorials, goBackTown],
+      text: "You enter the guild.",
+      bgimage: "bgimages/receptionist.jpg"
     },
-    { 
-        name: "win", 
-        "button text": ["REPLAY?", "REPLAY?", "REPLAY?"], 
-        "button functions": [restart, restart, restart], 
-        text: "You defeat the dragon! YOU WIN THE GAME! 🎉" ,
-        bgimage: "bgimages/slime.jpg"
-    },
-    {
-        name: "easter egg",
-        "button text": ["2", "8", "Go to town square?"],
-        "button functions": [pickTwo, pickEight, goTown],
-        text: "You find a secret game. Pick a number above. Ten numbers will be randomly chosen between 0 and 10. If the number you choose matches one of the random numbers, you win!"
-    }
+
 ];
 
 // initialize buttons
@@ -384,6 +373,8 @@ function goTown() {
   update(locations[0]);
 }
 
+
+
 function goStore() {
   update(locations[1]);
 }
@@ -400,12 +391,24 @@ function goGoblin() {
 
 //non-Functioninglocations
 function goGuild() {
-  update(locations[1]);
+  update(locations[12]);
 }
 function goInn() {
-  update(locations[1]);
+  update(locations[11]);
 }
 
+function checkIn() {
+  InitializeCharStatus();
+  if (golD >= 50) {
+  golD -= 50;
+  goldText.innerText = golD;
+  update(locations[0]);
+  } else {
+    log.innerText = "\nyou dont have enough gold";
+  update(locations[0]);
+  }
+
+}
 
 function buyItem() {
   if (gold >= 10) {
@@ -480,108 +483,6 @@ function sellWeapon() {
   }
 }
 
-function fightSlime() {
-  fighting = 0;
-  goFight();
-}
-
-function fightBeast() {
-  fighting = 1;
-  goFight();
-}
-
-function fightDragon() {
-  fighting = 2;
-  goFight();
-}
-
-function goFight() {
-  update(locations[3]);
-  monsterHealth = monsters[fighting].health;
-  monsterStats.style.display = "block";
-  monsterName.innerText = monsters[fighting].name;
-  monsterHealthText.innerText = monsterHealth;
-}
-
-function attack() {
-  text.innerText = "The " + monsters[fighting].name + " attacks.";
-  text.innerText += " You attack it with your " + weapons[currentWeapon].name + ".";
-  health -= getMonsterAttackValue(monsters[fighting].level);
-  if (isMonsterHit()) {
-    monsterHealth -= weapons[currentWeapon].power + Math.floor(Math.random() * xp) + 1;    
-  } else {
-    text.innerText += " You miss.";
-  }
-  healthText.innerText = health;
-  monsterHealthText.innerText = monsterHealth;
-  if (health <= 0) {
-    lose();
-  } else if (monsterHealth <= 0) {
-    fighting === 2 ? winGame() : defeatMonster();
-  }
-  if (Math.random() <= .1 && inventoryWeapon.length !== 1) {
-    text.innerText += " Your " + inventoryWeapon.pop() + " breaks.";
-    currentWeapon--;
-  }
-}
-
-function getMonsterAttackValue(level) {
-  const hit = (level * 5) - (Math.floor(Math.random() * xp));
-  console.log(hit);
-  return hit > 0 ? hit : 0;
-}
-
-function isMonsterHit() {
-  return Math.random() > .2 || health < 20;
-}
-
-function dodge() {
-  text.innerText = "You dodge the attack from the " + monsters[fighting].name;
-}
-
-function defeatMonster() {
-  gold += Math.floor(monsters[fighting].level * 6.7);
-  xp += monsters[fighting].level;
-  goldText.innerText = golD;
-  xpText.innerText = xp;
-  update(locations[4]);
-}
-
-
-
-
-function lose() {
-  update(locations[5]);
-}
-
-function winGame() {
-  update(locations[6]);
-}
-
-function restart() {
-  xp = 0;
-  health = 100;
-  gold = 50;
-  currentWeapon = 0;
-  inventory = ["stick"];
-  goldText.innerText = golD;
-  healthText.innerText = health;
-  xpText.innerText = xp;
-  goTown();
-}
-
-function easterEgg() {
-  update(locations[7]);
-}
-
-function pickTwo() {
-  pick(2);
-}
-
-function pickEight() {
-  pick(8);
-}
-
 
 /*temporary function */
 function tutorials() {
@@ -598,28 +499,6 @@ function start() {
   update(locations[99])
 }
 
-function pick(guess) {
-  let numbers = [];
-  while (numbers.length < 10) {
-    numbers.push(Math.floor(Math.random() * 11));
-  }
-  text.innerText = "You picked " + guess + ". Here are the random numbers:\n";
-  for (let i = 0; i < 10; i++) {
-    text.innerText += numbers[i] + "\n";
-  }
-  if (numbers.indexOf(guess) !== -1) {
-    text.innerText += "Right! You win 20 gold!";
-    gold += 20;
-    goldText.innerText = golD;
-  } else {
-    text.innerText += "Wrong! You lose 10 health!";
-    health -= 10;
-    healthText.innerText = health;
-    if (health <= 0) {
-      lose();
-    }
-  }
-}
 
 function changeBackgroundImage(bgimage) {
       
@@ -936,6 +815,22 @@ function blessingRaffle(blessingsNum) {
     rarity: "intermediate",
     buff: "playerbaseStat.spd += 50;"
     },
+    {name: "SpideyPower",
+    rarity: "intermediate",
+    buff: "playerbaseStat.str += 50;"
+    },
+    {name: "SpideySense",
+    rarity: "intermediate",
+    buff: "playerbaseStat.agi += 50;"
+    },
+    {name: "GiantMagic",
+    rarity: "intermediate",
+    buff: "playerbaseStat.mgk += 50;"
+    },
+    {name: "FlyingRaijin",
+    rarity: "intermediate",
+    buff: "playerbaseStat.spd += 50;"
+    },
   ]
   
   for(let i = 0; i < blessingsNum; i++) {
@@ -969,30 +864,45 @@ function bgDescripAvatar(bgCardImage, Avatar) {
 // Skills available in the market
 const skillDex = [
   //0
-  {name: "normal atk", type: "damage", rarity: "common", target: "enemy", baseDamage: 0, additionalDamage: "str + mgk", baseHeal: 0, additionalHeal: 0, special: "none", manaCost: 10, cost: 50},
-  {name: "manaball", type: "damage", rarity: "common", target: "enemy", baseDamage: 20, additionalDamage: "mgk * 1.5", baseHeal: 0, additionalHeal: 0, special: "none", manaCost: 20, cost: 50},
-  {name: "manablasth", type: "damage", rarity: "common", target: "enemy", baseDamage: 20, additionalDamage: "mgk * 2.2", baseHeal: 0, additionalHeal: 0, special: "none", manaCost: 20, cost: 50},
-  {name: "manabarrier", type: "shield", rarity: "common", target: "ally", baseDamage: 0, additionalDamage: 0, baseHeal: 0, additionalHeal: 0, special: "shield += 4 * (res * mgk);", manaCost: 20, cost: 50},
+  {name: "normal atk", type: "damage", rarity: "common", target: "enemy", baseDamage: 0, additionalDamage: "str + mgk", baseHeal: 0, additionalHeal: 0, special: "", manaCost: 0, cost: 50},
+  {name: "manaball", type: "damage", rarity: "common", target: "enemy", baseDamage: 20, additionalDamage: "mgk * 1.5", baseHeal: 0, additionalHeal: 0, special: "", manaCost: 30, cost: 50},
+  {name: "manablast", type: "damage", rarity: "common", target: "enemy", baseDamage: 20, additionalDamage: "mgk * 2.2", baseHeal: 0, additionalHeal: 0, special: "", manaCost: 50, cost: 50},
+  {name: "manabarrier", type: "buff", rarity: "common", target: "ally", baseDamage: 0, additionalDamage: 0, baseHeal: 0, additionalHeal: 0, special: "res += (1.5 * mgk)", manaCost: 30, cost: 50},
   //4
-  {name: "shieldbash", type: "damage", rarity: "common", target:"enemy", baseDamage: 0, additionalDamage: 0, baseHeal: 20, additionalHeal: "def + res", special: "none", manaCost: 0, cost: 50},
+  {name: "shieldbash", type: "damage", rarity: "common", target:"enemy", baseDamage: 0, additionalDamage: "1.5 * (def + res)", baseHeal: 0, additionalHeal: 0, special: "", manaCost: 30, cost: 50},
   //5
-  {name: "bullcharghe", type: "damage", rarity: "common", target:"enemy", baseDamage: 0, additionalDamage: 0, baseHeal: 20, additionalHeal: "(def + res)* 1.2", special: "none", manaCost: 0, cost: 50},
+  {name: "bullcharghe", type: "damage", rarity: "common", target:"enemy", baseDamage: 0, additionalDamage: 0, baseHeal: 20, additionalHeal: "(def + res)* 1.2", special: "", manaCost: 30, cost: 50},
 
-  {name: "slash", type: "damage", rarity: "common", target: "enemy", baseDamage: 10, additionalDamage: "str * 1.2", baseHeal: 0, additionalHeal: 0, special: "none", manaCost: 0,  cost: 50},
-  {name: "heavyslash", type: "damage", rarity: "common", target: "enemy", baseDamage: 10, additionalDamage: "str * 2", baseHeal: 0, additionalHeal: 0, special: "none", manaCost: 0, cost: 50},
+  {name: "slash", type: "damage", rarity: "common", target: "enemy", baseDamage: 10, additionalDamage: "str * 1.2", baseHeal: 0, additionalHeal: 0, special: "", manaCost: 30,  cost: 50},
+  {name: "heavyslash", type: "damage", rarity: "common", target: "enemy", baseDamage: 10, additionalDamage: "str * 2", baseHeal: 0, additionalHeal: 0, special: "", manaCost: 50, cost: 50},
 
-  {name: "heal", type: "heal", rarity: "common", target: "ally", baseDamage: 0, additionalDamage: 0, baseHeal: 20, additionalHeal: "mgk * 2", special: "none", manaCost: 20, cost: 50},
-  {name: "hugeheal", type: "heal", rarity: "common", target: "ally", baseDamage: 0, additionalDamage: 0, baseHeal: 20, additionalHeal: "mgk * 2", special: "none", manaCost: 20, cost: 50},
+  {name: "heal", type: "heal", rarity: "common", target: "ally", baseDamage: 0, additionalDamage: 0, baseHeal: 20, additionalHeal: "mgk * 2", special: "", manaCost: 10, cost: 50},
+  {name: "hugeheal", type: "heal", rarity: "common", target: "ally", baseDamage: 0, additionalDamage: 0, baseHeal: 20, additionalHeal: "mgk * 2", special: "", manaCost: 20, cost: 50},
   //10
-  {name: "lizardskin",type: "buff", rarity: "common",target: "ally", baseDamage: 0, additionalDamage: 0, baseHeal: 20, additionalHeal:  0, special: "res += res + (mgk * 1.2); turn = 2;", manaCost: 20, cost: 50},
-  {name: "windaura",type: "buff", rarity: "common",target: "ally", baseDamage: 0, additionalDamage: 0, baseHeal: 20, additionalHeal:  0, special: "spd += 30; turn = 3;", manaCost: 20, cost: 50},
+  {name: "lizardskin",type: "buff", rarity: "common",target: "ally", baseDamage: 0, additionalDamage: 0, baseHeal: 20, additionalHeal:  0, special: "res += 10 + (mgk * 1.2)", manaCost: 30, cost: 50},
+  {name: "windaura",type: "buff", rarity: "common",target: "ally", baseDamage: 0, additionalDamage: 0, baseHeal: 20, additionalHeal:  0, special: "spd += 20", manaCost: 20, cost: 30},
 
   //12
-  {name: "Wrath", type: "damage", rarity: "unique", target: "ally", baseDamage: playerbaseStat.def, additionalDamage: "(str*2) + res + def", baseHeal: 0, additionalHeal:  0, special: "health -= (res + def) / 2", manaCost: 20, cost: 50},
-  {name: "Swallow Reversal",type: "damage", rarity: "unique",target: "ally", baseDamage: playerbaseStat.spd, additionalDamage: "(spd + agi) * 1.5", baseHeal: 20, additionalHeal:  0, special: "spd += 10; turn = 3;", manaCost: 20, cost: 50},
-  {name: "Explosion",type: "damage", rarity: "unique",target: "ally", baseDamage: playerbaseStat.mgk, additionalDamage: "manA * 2", baseHeal: 20, additionalHeal:  0, special: "manA = 0", manaCost: 20, cost: 50},
-  {name: "purification",type: "damage", rarity: "unique",target: "ally", baseDamage: playerbaseStat.res, additionalDamage: 0, baseHeal: 20, additionalHeal:  0, special: "spd += 30; turn = 3;", manaCost: 20, cost: 50}
+  {name: "Wrath", type: "damage", rarity: "unique", target: "ally", baseDamage: playerbaseStat.def, additionalDamage: "(str * 2) + res + def", baseHeal: 0, additionalHeal:  0, special: "dmg += ((res + def) / 3)", manaCost: 50, cost: 50},
+  {name: "Swallow Reversal",type: "damage", rarity: "unique",target: "ally", baseDamage: playerbaseStat.spd, additionalDamage: "(spd + agi) * 1.5", baseHeal: 0, additionalHeal:  0, special: "spd += 10", manaCost: 50, cost: 50},
+  {name: "Explosion",type: "damage", rarity: "unique",target: "ally", baseDamage: playerbaseStat.mgk, additionalDamage: "mgk + (mana * 2)", baseHeal: 0, additionalHeal:  0, special: "mana = 0", manaCost: 0, cost: 50},
+  {name: "purification",type: "damage", rarity: "unique",target: "ally", baseDamage: playerbaseStat.res, additionalDamage: "(2 * res) + def)", baseHeal: 0, additionalHeal: "", special: "health += (res + def)", manaCost: 50, cost: 50}
 
+]
+monsterSkillDex = [
+  
+    {name: "fang", type: "damage", rarity: "common", target: "enemy", baseDamage: 10, additionalDamage: "str", baseHeal: 0, additionalHeal: "", special: "", manaCost: 20, cost: 50},
+    {name: "heavySwing", type: "dmg", rarity: "common", target: "enemy", baseDamage: 10, additionalDamage: "str + def + res", baseHeal: 0, additionalHeal: "", special: "", manaCost: 60, cost: 50},
+    {name: "dark pulse", type: "dmg", rarity: "common", target: "enemy", baseDamage: 10, additionalDamage: "mgk", baseHeal: 0, additionalHeal: "", special: "", manaCost: 30, cost: 50},
+    
+    {name: "heal", type: "heal", rarity: "common", target: "ally", baseDamage: 0, additionalDamage: 0, baseHeal: 20, additionalHeal: "mgk * 2", special: "", manaCost: 20, cost: 50},
+    {name: "hugeheal", type: "heal", rarity: "common", target: "ally", baseDamage: 0, additionalDamage: 0, baseHeal: 20, additionalHeal: "mgk * 2", special: "", manaCost: 40, cost: 50},
+
+    
+    {name: "dragonBreath", type: "dmg", rarity: "common", target: "enemy", baseDamage: 0, additionalDamage: "str + mgk", baseHeal: 0, additionalHeal: "", special: "", manaCost: 60, cost: 50},
+    {name: "dragonClaw", type: "dmg", rarity: "common", target: "enemy", baseDamage: 10, additionalDamage: "mgk", baseHeal: 0, additionalHeal: "", special: "", manaCost: 30, cost: 50},
+    
+  
 ]
 
 function phase3I() {
@@ -1010,14 +920,12 @@ function phase3I() {
     CharSkills.push(uniqueSkill[3]);
   } 
 
-  if (diceRoll3 >= 91 ){ 
-    skillNumStart = 5;
-  } else if (diceRoll3 < 90 && diceRoll3 > 81) {
-    skillNumStart = 4;
-  } else if (diceRoll3 < 80 && diceRoll3 > 41) {
+  if (diceRoll3 >= 81 ){ 
     skillNumStart = 3;
-  } else {
+  } else if (diceRoll3 < 80 && diceRoll3 > 41) {
     skillNumStart = 2;
+  } else {
+    skillNumStart = 1;
   }
   let skillBunos = [];
   skillBunos.push(skillDexLibrary[0]);
@@ -1077,16 +985,12 @@ for (let i = 0; i < skillNumStart; i++) {
   skillsSetText.innerHTML = skillCardsTEXT;
 
   
-  let diceRoll2 = Math.floor(Math.random()*100);
-  if (diceRoll2 > 90) {
-    log.innerText += "\n the gods would like to give you more";
-    update(locations[5]);
-  } else {
+  
     modal1.style.display = 'flex';
     charName.style.display = 'block';
     nameButton.style.display = 'block';
     update(locations[6]);
-  }
+  
  
 }
 
@@ -1099,7 +1003,7 @@ function caveEvent() {
   if (diceRoll6 > 70 && diceRoll6 < 89) {
     campRoom();
   } else {
-    goblinFight();
+    gFight();
   }
 } 
 function treasureRoom() {
@@ -1107,39 +1011,42 @@ function treasureRoom() {
   golD += 100;
   goldText.innerText = golD;
   towndistance++;
+  log.innerText += "\nU stumble upon a treasure chest";
   goGoblin();
 }
 function campRoom() {
-  healtH += 30;
-  if (healtH >= maxhealtH) {
-    InitializeCharStatus();
+  
+  if (healtH <= maxhealtH) {
+    healtH += 30;
   }
   
   healthText.innerText = healtH;
   manaText.innerText = manA;
+  log.innerText += "\nyou spot an adventurers camp\n your rested and regain some health";
   console.log("refreshing");
   goGoblin();
 }
 
-function goblinFight() {
+function gFight() {
+  distancefromTown++;
   let diceRoll6 = Math.floor(Math.random()*100);
   let enemyNum = 0;
-  diceRoll6 += distancefromTown;
-  if (diceRoll6 < 40) {
+  diceRoll6 += (distancefromTown * 25);
+  if (diceRoll6 < 60) {
     enemyNum = 1;
-  } else if (diceRoll6 < 70 && diceRoll6 > 41) {
+  } else if (diceRoll6 < 100 && diceRoll6 > 61) {
     enemyNum = 2;
   } else {
     enemyNum = 3;
   }
   console.log(enemyNum + "enemy");
-  fightingGoblin(enemyNum);
+  fighting(enemyNum);
   
 }
 
 
 
-function fightingGoblin(number) {
+function fighting(number) {
   fightGame.style.display = 'flex';
   
 /* stats inside the fight */
@@ -1181,11 +1088,15 @@ let WhosTurn = [];
   since i have to apply everything as i learned it.
   */
   initializeGoFight();
-  let EnemyCardsTextAll = " ";
+  let EnemyCardsTextAll = "";
   let ID = "";
+  if (distancefromTown > 200) {
+    monstersFight.push(monsters[5].name);
+    monsterID.push(ID); 
+  } else {
   for(let i = 0; i < number; i++) {
-    let diceRoll = Math.floor(Math.random()*100);
-    diceRoll += distancefromTown * 30;
+    let diceRoll = Math.floor(Math.random()*10);
+    diceRoll += (distancefromTown * 30);
     if (i == 0) {
       ID = "A";
     } else if (i == 1) {
@@ -1193,19 +1104,28 @@ let WhosTurn = [];
     } else if (i == 2) {
       ID = "C";
     }
-    if (diceRoll >= 101 && diceRoll < 120) {
-      monstersFight.push(monsters[2].name);
+    
+    if (diceRoll <= 30) {
+      monstersFight.push(monsters[0].name);
       monsterID.push(ID);
-    }
-    else if (diceRoll >= 70 && diceRoll < 100) {
-      monstersFight.push(monsters[2].name);
-      monsterID.push(ID);
-    } else if (diceRoll < 70){
+    } else if (diceRoll > 31 && diceRoll <= 60 ) {
       monstersFight.push(monsters[1].name);
       monsterID.push(ID);
+    } else if (diceRoll > 61 && diceRoll <= 80 ) {
+      monstersFight.push(monsters[2].name);
+      monsterID.push(ID); }
+      else if (diceRoll > 81 && diceRoll <= 90 ) {
+      monstersFight.push(monsters[3].name);
+      monsterID.push(ID);
     }
-  
+    else if (diceRoll >= 91 && diceRoll < 150) {
+      monstersFight.push(monsters[4].name);
+      monsterID.push(ID);
+    } else if (diceRoll >= 151){
+      monstersFight.push(monsters[5].name);
+      monsterID.push(ID); }
   }
+}
     /* INITIALIZE MONSTER CARDS need another function to update monstercards*/
     console.log(monstersFight);
     console.log("monserID");
@@ -1310,27 +1230,33 @@ let WhosTurn = [];
   const battlePhase = [
     {
       name: "yourTurn",
-      "button text": ["Normal Atk", "Skills", "wait", "wait"],
-      "button functions": [normalAtk, tutorials3, tutorials3, tutorials3],
-      text: "Your turn",
+      "button text": ["Normal Atk", "Skills", "UniqueSkill", "flee"],
+      "button functions": [normalAtk, useSkill, uniqueSkill, Run],
+      text: "Your turn"
     },
     {
       name: "endYourTurn",
       "button text": ["continue", "---", "---", "---"],
       "button functions": [endMyTurn, tutorials3, tutorials3, tutorials3],
-      text: "End turn",
+      text: "End turn"
     },
     {
       name: "enemyTurn",
       "button text": ["continue", "continue", "continue", "continue"],
       "button functions": [continueBattle, continueBattle, continueBattle, continueBattle],
-      text: "Enemy Turn",
+      text: "Enemy Turn"
     },
     {
       name: "End",
       "button text": ["End", "continue", "continue", "continue"],
       "button functions": [endBattle, tutorials3, tutorials3, tutorials3],
-      text: "You have Won the battle!",
+      text: "You have Won the battle!"
+    },
+    {
+      name: "other",
+      "button text": ["run", "continue", "continue", "continue"],
+      "button functions": [continueBattle, continueBattle, continueBattle, continueBattle],
+      text: "Enemy Turn"
     }
   ];
   
@@ -1437,6 +1363,207 @@ let WhosTurn = [];
   
   }
 
+  function useSkill() {
+    //initialize
+    button9.classList.add('inactivebutton');
+    button10.classList.add('inactivebutton');
+    button11.classList.add('inactivebutton');
+   
+    console.log(CharSkills);
+    button9.onclick = tutorials3;
+    button10.onclick = tutorials3;
+    button11.onclick = tutorials3;
+    button12.onclick = tutorials3;
+    button10.innerText = " --- ";
+    button11.innerText = " --- ";
+      if(CharSkills.length >= 3){
+        button9.innerText = `${CharSkills[2]}`;
+        button9.onclick = function() {useSkillOn(CharSkills[2])};
+      }
+      if (CharSkills.length >= 4){
+        button10.onclick = function() {useSkillOn(CharSkills[3])};
+        button10.innerText = `${CharSkills[3]}`;
+        button11.innerText = " --- ";
+        button10.classList.remove('inactivebutton');
+      }
+      if(CharSkills.length >= 5){
+        button11.onclick = function() {useSkillOn(CharSkills[4])};
+        button10.innerText = `${CharSkills[4]}`;
+        button11.classList.remove('inactivebutton');
+      }
+  
+      button12.onclick = InitializeMyTurn();
+      button12.innerText = "go back";
+      button12.classList.remove('inactivebutton');
+      button12.classList.remove('inactivebutton');
+  
+  }
+  function uniqueSkill() {
+    let str = strFight[0];
+    let spd = spdFight[0];
+    let res = resFight[0];
+    let agi = agiFight[0];
+    let def = defFight[0];
+    let mgk = mgkFight[0];
+    let mana = manaFight[0];
+    let health = healthFight[0];
+    let j = 0;
+    for(let i = 0; i < skillDex.length ; i++) {
+      if(CharSkills[1] == skillDex[i].name) {
+        j = i;
+      }
+    }
+    let dmg = 0;
+      dmg = skillDex[j].baseDamage + Math.floor(eval(skillDex[j].additionalDamage));
+      eval(skillDex[j].special);
+      manA -= skillDex[j].manaCost;
+      button9.classList.add('inactivebutton');
+      button10.classList.add('inactivebutton');
+      button11.classList.add('inactivebutton');
+      
+      strFight[0] = str;
+      spdFight[0] =  spd;
+      resFight[0] = res;
+      agiFight[0] = agi;
+      defFight[0] = def;
+      mgkFight[0] = mgk;
+      manaFight[0] = mana;
+      healthFight[0] = health;
+    button9.onclick = tutorials3;
+    button10.onclick = tutorials3;
+    button11.onclick = tutorials3;
+    button12.onclick = tutorials3;
+    button10.innerText = " --- ";
+    button11.innerText = " --- ";
+      if(monstersFight.length >= 1 ){
+        button9.innerText = `${monstersFight[0]} ${monsterID[0]}`;
+        button9.onclick = function() {useSkillOnMonster(1, j, dmg)};
+        button9.classList.remove('inactivebutton');
+      }
+      if (monstersFight.length >= 2 ){
+        
+        button10.onclick = function() {useSkillOnMonster(2, j, dmg)};
+        button10.innerText = `${monstersFight[1]} ${monsterID[1]}`;
+        button11.innerText = " --- ";
+        button10.classList.remove('inactivebutton');
+      }
+      if(monstersFight.length >= 3 ){
+       
+        button11.onclick = function() {useSkillOnMonster(3, j, dmg)};
+        button11.innerText = `${monstersFight[2]} ${monsterID[2]}`;
+        button11.classList.remove('inactivebutton');
+      }
+  
+      button12.onclick = InitializeMyTurn();
+      button12.innerText = "go back";
+
+  }
+  function useSkillOn(skillName) {
+    //initialize
+    let str = strFight[0];
+    let spd = spdFight[0];
+    let res = resFight[0];
+    let agi = agiFight[0];
+    let def = defFight[0];
+    let mgk = mgkFight[0];
+    let mana = manaFight[0];
+    let health = healthFight[0];
+    let j = 0;
+    for(let i = 0; i < skillDex.length ; i++) {
+      if(skillName == skillDex[i].name) {
+        j = i;
+      }
+    }
+    if (skillDex[j].type == "heal") {
+      if(skillDex[j].target == "ally") {
+        let healTurn = skillDex[j].baseHeal + Math.floor(eval(skillDex[j].additionalHeal));
+        manaFight[0] -= Math.floor(skillDex[j].manaCost + (healTurn / 3));
+        healthFight[0] += healTurn;
+      }
+      updateCharacterFightHealth();
+      endMyTurn();
+
+    } else if (skillDex[j].type == "buff") {
+    
+      let spd = spdFight[0];
+      let res = resFight[0];
+      eval(skillDex[j].special);
+      resFight[0] = res;
+      spdFight[0] = spd;
+      manaFight[0] -= (Math.floor(skillDex[j].manaCost));
+      updateCharacterFightHealth();
+      endMyTurn();
+    } else if (skillDex[j].type == "damage") {
+    
+      let dmg = 0;
+      dmg = skillDex[j].baseDamage + Math.floor(eval(skillDex[j].additionalDamage));
+      if (skillDex[j].type == "unique"){
+        eval(skillDex[j].special);
+      }
+      manA -= skillDex[j].manaCost;
+      button9.classList.add('inactivebutton');
+      button10.classList.add('inactivebutton');
+      button11.classList.add('inactivebutton');
+      
+      strFight[0] = str;
+      spdFight[0] =  spd;
+      resFight[0] = res;
+      agiFight[0] = agi;
+      defFight[0] = def;
+      mgkFight[0] = mgk;
+      manaFight[0] = mana;
+      healthFight[0] = health;
+    button9.onclick = tutorials3;
+    button10.onclick = tutorials3;
+    button11.onclick = tutorials3;
+    button12.onclick = tutorials3;
+    button10.innerText = " --- ";
+    button11.innerText = " --- ";
+      if(monstersFight.length >= 1 ){
+        button9.innerText = `${monstersFight[0]} ${monsterID[0]}`;
+        button9.onclick = function() {useSkillOnMonster(1, j, dmg)};
+        button9.classList.remove('inactivebutton');
+      }
+      if (monstersFight.length >= 2 ){
+        
+        button10.onclick = function() {useSkillOnMonster(2, j, dmg)};
+        button10.innerText = `${monstersFight[1]} ${monsterID[1]}`;
+        button11.innerText = " --- ";
+        button10.classList.remove('inactivebutton');
+      }
+      if(monstersFight.length >= 3 ){
+       
+        button11.onclick = function() {useSkillOnMonster(3, j, dmg)};
+        button11.innerText = `${monstersFight[2]} ${monsterID[2]}`;
+        button11.classList.remove('inactivebutton');
+      }
+  
+      button12.onclick = InitializeMyTurn();
+      button12.innerText = "go back";
+      button12.classList.remove('inactivebutton');
+    }
+  }
+  function useSkillOnMonster(N, j, dmg) {
+    
+    let diceRoll5 = Math.floor(Math.random()*100);
+    if (diceRoll5 < 50){
+    FightText.innerText += "\nCritical Hit";  
+    Math.floor(Math.random()*((agiFight[N]+agiFight[0]) / agiFight[0])) < agiFight[0] ? (dmg *= 2) : (dmg *= 1);
+    }
+    dmg -= Math.floor(((defFight[N] + resFight[N] )/ 2));
+    dmg < 0 ? dmg = 0 : dmg;
+    dmg = Math.floor(dmg);
+    healthFight [N] -= dmg;
+    console.log(N);
+    console.log(diceRoll5);
+    console.log(dmg);
+    FightText.innerText += `\n You use ${skillDex[j].name} it deals ${dmg} damage`;
+    button9.classList.add('inactivebutton');
+    button10.classList.add('inactivebutton');
+    button11.classList.add('inactivebutton');
+    button12.classList.add('inactivebutton');
+    setTimeout(endMyTurn, 1000);
+  }
 
 
   //functions
@@ -1447,8 +1574,12 @@ let WhosTurn = [];
     let agi = agiFight[0];
     let power = 0;
     power = skillDex[0].baseDamage + eval(skillDex[0].additionalDamage);
-    Math.floor(Math.random()*(agiFight[1]+agi)) < agi ? (power *= 2) : (power *= 1);
-    power -= (defFight[1] + (resFight[1] / 2));
+    let diceRoll5 = Math.floor(Math.random()*100);
+    if (diceRoll5 < 50){
+    Math.floor(Math.random()*(agiFight[2]+agi)) < agi ? (power *= 2) : (power *= 1);
+    }
+    power -= Math.floor((defFight[1] + (resFight[1] / 2)));
+    power < 0 ? power = 0 : power;
     healthFight [1] -= power;
     console.log(eval(skillDex[0].additionalDamage));
     console.log(str);
@@ -1465,10 +1596,14 @@ let WhosTurn = [];
     let str = strFight[0];
     let mgk = mgkFight[0]; 
     let agi = agiFight[0];
-     
-    let power = skillDex[0].baseDamage + eval(skillDex[0].additionalDamage);
+    let power = 0;
+    power = skillDex[0].baseDamage + eval(skillDex[0].additionalDamage);
+    power < 0 ? power = 0 : power;
+    let diceRoll5 = Math.floor(Math.random()*100);
+    if (diceRoll5 < 50){
     Math.floor(Math.random()*(agiFight[2]+agi)) < agi ? (power *= 2) : (power *= 1);
-    power -= (defFight[2] + (resFight[2] / 2));
+    }
+    power -= Math.floor((defFight[2] + (resFight[2] / 2)));
     healthFight [2] -= power;
     console.log(eval(skillDex[0].additionalDamage));
     console.log(str);
@@ -1485,10 +1620,13 @@ let WhosTurn = [];
     let str = strFight[0];
     let mgk = mgkFight[0]; 
     let agi = agiFight[0];
-     
     let power = skillDex[0].baseDamage + eval(skillDex[0].additionalDamage);
-    Math.floor(Math.random()*(agiFight[3]+agi)) < agi ? (power *= 2) : (power *= 1);
-    power -= (defFight[3] + (resFight[3] / 2));
+    let diceRoll5 = Math.floor(Math.random()*100);
+    if (diceRoll5 < 50){
+    Math.floor(Math.random()*(agiFight[2]+agi)) < agi ? (power *= 2) : (power *= 1);
+    }
+    power -= Math.floor((defFight[3] + (resFight[3] / 2)));
+    power < 0 ? power = 0 : power;
     healthFight [3] -= power;
     console.log(eval(skillDex[0].additionalDamage));
     console.log(str);
@@ -1504,7 +1642,7 @@ let WhosTurn = [];
 
   function endMyTurn() {
     
-  
+
     CheckMonsterHealth();
     console.log(CurrentTurn);
     CurrentTurn++;
@@ -1520,20 +1658,23 @@ let WhosTurn = [];
     if((WhosTurn[CurrentTurn]  ==  monsterID[0]) && healthFight[1] > 0){
        
       //EnemyTurn();
-      FightText.innerText += `${monstersFight[0]} A attacks\n`;
+      FightText.innerText += `${monstersFight[0]}  attacks\n`;
       goblinsTurn(1);
       
     } else if ((WhosTurn[CurrentTurn] == monsterID[1]) && healthFight[2] > 0){
       //EnemyTurn(); 
-      FightText.innerText += `${monstersFight[1]} A attacks\n`;
+      FightText.innerText += `${monstersFight[1]}  attacks\n`;
       goblinsTurn(2);
       
       
     } else if ((WhosTurn[CurrentTurn] == monsterID[2]) && healthFight[3] > 0){       
     //EnemyTurn();
-    FightText.innerText += `${monstersFight[2]} A attacks\n`;
+    FightText.innerText += `${monstersFight[2]} Aattacks\n`;
     goblinsTurn(3);
     } else {
+      if(CurrentTurn > 20) {
+        CurrentTurn = 0;
+      }
       CurrentTurn++;
       setTimeout(TurnChecker(CurrentTurn), 1200);
     }
@@ -1543,11 +1684,24 @@ function goblinsTurn(N) {
   console.log("enemy use normal attack");
   let str = strFight[N];
   let mgk = mgkFight[N];
-  healthFight[0] -= skillDex[0].baseDamage + eval(skillDex[0].additionalDamage);
+  let dmg = skillDex[0].baseDamage + eval(skillDex[0].additionalDamage);
+  let diceRoll5 = Math.floor(Math.random()*100);
+  if (diceRoll5 < 50){
+  dmg -= Math.floor((defFight[0] + (resFight[0] / 2)));
+  if (Math.floor(Math.random()*(agiFight[N]+agiFight[0])) < agiFight[0]) {
+    console.log(agiFight[0]);
+    console.log(agiFight[N]);
+    console.log(Math.random()*(agiFight[N]+agiFight[0]));
+    FightText.innerText += "monster attack missed";
+    dmg = 0; 
+  }
+  }
+  dmg < 0 ? dmg = 0 : dmg;
+  healthFight[0] -= dmg;
   manaFight[N] += skillDex[0].manaCost;
   console.log(str + " + " + mgk);
   console.log("ends" + `${monstersFight[N - 1]}`+ "turn")
-  FightText.innerText += "\nIt use normal Attack\n";
+  FightText.innerText += `\nIt use normal Attack\n you recieve: ${dmg} Damage.`;
   FightText.scrollTop = FightText.scrollHeight;
   updateCharacterFightHealth();
   updateMonsterHealth();
@@ -1643,6 +1797,26 @@ function updateMonsterHealth() {
     button12.classList.remove('inactivebutton');
   }
   
+  function Run() {
+    let diceRoll = Math.floor(Math.random()*100);
+    if (diceRoll > 50) {
+    setTimeout(endMyTurn, 1000);
+    } else {
+      button9.classList.remove('inactivebutton');
+      fightGame.style.display = 'none';
+      healtH = healthFight[0];
+      FightText.innerText = `\n Distance from town: ${distancefromTown} \n`;
+      healthText.innerText = healtH;
+      manA = manaFight[0];
+      goldText.innerText = golD;
+      xpText.innerText = xP;
+      log.innerText += `\nyou flee`;
+      log.innerText += `\ndistance from Town ${distancefromTown}`;
+      score = distancefromTown * 1;
+      scoreText.innerText = `${score}`;
+      goGoblin();
+    }
+  }
 
   function endBattle() {
     button9.classList.remove('inactivebutton');
@@ -1651,12 +1825,17 @@ function updateMonsterHealth() {
     FightText.innerText = `\n Distance from town: ${distancefromTown} \n`;
     healthText.innerText = healtH;
     manA = manaFight[0];
-    golD += (30 * number);
+    let goldWon = (30 * number);
+    let xpWon = (2 * number);
+    golD += goldWon;
+    xP += xpWon; 
     goldText.innerText = golD;
-    xP += (20 * number);
     xpText.innerText = xP;
-    distancefromTown++;
     
+    log.innerText += `\nyou receive: ${goldWon} gold and ${xpWon} xp`;
+    log.innerText += `\ndistance from Town ${distancefromTown}`;
+    score = distancefromTown * 5;
+    scoreText.innerText = `${score}`;
     goGoblin();
     }
   
@@ -1664,9 +1843,11 @@ function updateMonsterHealth() {
     FightText.innerText = "\nWait...\n";
   }
   console.log(characterName);
-
+  
 }
-
+function goBackTown() {
+  update(locations[0]);
+}
 
 function initializeGoFight() {
 characterFaceAvatar.style.backgroundImage = `url('${fightAvatarImageGlobal}')`;
