@@ -284,7 +284,7 @@ const locations = [
     {
       name: "goDungeon", //7
       "button text": ["dungeon time", "dungeon time", "DUNGEON!", "back to town"],
-      "button functions": [ goGoblin, tutorials, tutorials, goTown],/*[getQuest, adventurerHall, gotoReceptionist, contributeToGuild],*/
+      "button functions": [ goGoblin,  goGoblin,  goGoblin, goTown],/*[getQuest, adventurerHall, gotoReceptionist, contributeToGuild],*/
       text: "You enter the goblin cave",
       bgimage: "bgimages/cave.jpg"
     },
